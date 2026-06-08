@@ -1,10 +1,10 @@
 # Todo Scheduler Web
 
-일정과 할 일을 관리하는 웹 애플리케이션입니다.
+일정과 할 일을 관리하는 프론트엔드 웹 프로젝트입니다.
 
-현재 단계는 GitHub 초기 업로드를 위한 기본 디렉토리 구조만 포함합니다.
+현재 단계에서는 완성된 기능 구현이 아니라, GitHub 초기 업로드와 협업을 위한 기본 디렉터리 구조를 구성합니다.
 
-## 필수 기능 범위
+## 필수 기능
 
 - 할 일 추가
 - 할 일 수정
@@ -17,50 +17,61 @@
 - 작업 상태 관리
 - 데이터 저장 및 불러오기
 
-## 개발 단위 제안
+## 디렉터리 구조
 
-1. 프로젝트 초기 세팅
-   - React/Vite, 라우팅, 스타일 시스템, 기본 레이아웃 세팅
+```text
+src/
+  app/          # 앱 전체 설정, 라우터, Provider
+  pages/        # 페이지 단위 화면
+  widgets/      # 페이지 안에서 쓰는 큰 UI 블록
+  features/     # 사용자 행동 단위 기능
+  entities/     # Todo, Category 같은 핵심 데이터 모델
+  shared/       # 공통 UI, 유틸, storage
+  styles/       # 전역 스타일
+  main.tsx      # 앱 진입점
+```
 
-2. 할 일 도메인 모델 설계
-   - todo 타입, 상태, 중요도, 카테고리, 마감일 데이터 구조 정의
+## 디렉터리 역할
 
-3. 할 일 목록 화면
-   - 전체 할 일 목록 표시, 빈 상태, 기본 카드/리스트 UI
+- `app`: 앱 전체 설정, 라우터, 전역 Provider를 관리합니다.
+- `pages`: 실제 페이지 화면을 관리합니다.
+- `widgets`: 페이지 안에서 여러 기능을 조합한 UI 블록을 관리합니다.
+- `features`: 할 일 추가, 수정, 삭제처럼 사용자 행동 단위 기능을 관리합니다.
+- `entities`: Todo, Category처럼 핵심 데이터 모델을 관리합니다.
+- `shared`: 공통 UI, 유틸 함수, 저장소 로직처럼 여러 곳에서 재사용하는 코드를 관리합니다.
+- `styles`: 전역 스타일을 관리합니다.
 
-4. 할 일 추가 기능
-   - 제목, 마감일, 중요도, 카테고리, 상태 입력 폼
+## 개발 단위
 
-5. 할 일 수정 기능
-   - 기존 할 일 정보 편집
+기능은 GitHub Issue 단위로 나누고, 각 Issue마다 브랜치와 Pull Request를 생성합니다.
 
-6. 할 일 삭제 기능
-   - 삭제 버튼, 삭제 확인 UX
+예시:
 
-7. 완료 체크 및 상태 관리
-   - 완료 체크, 진행 상태 변경, 상태별 표시
-
-8. 필터와 정렬
-   - 카테고리, 중요도, 완료 여부, 마감일 기준 필터/정렬
-
-9. 데이터 저장 및 불러오기
-   - 초기에는 localStorage, 이후 필요하면 백엔드/API로 확장
-
-10. 테스트 및 품질 관리
-    - 단위 테스트, UI 테스트, 접근성 점검, 배포 전 검증
+- `#1` 기본 디렉터리 구조 생성
+- `#2` 할 일 추가 기능 구현
+- `#3` 할 일 수정 기능 구현
+- `#4` 할 일 삭제 기능 구현
+- `#5` 완료 체크 기능 구현
+- `#6` 카테고리 관리 기능 구현
+- `#7` 데이터 저장 및 불러오기 구현
 
 ## 추천 GitHub 브랜치/이슈 단위
 
-- `init/project-setup`
-- `feature/todo-model`
-- `feature/todo-list`
-- `feature/create-todo`
-- `feature/edit-todo`
-- `feature/delete-todo`
-- `feature/toggle-complete`
-- `feature/category-management`
-- `feature/filters-sorting`
-- `feature/local-storage`
-- `test/core-flows`
+- `feat/project-setup-1`
+- `feat/todo-model-2`
+- `feat/todo-list-3`
+- `feat/create-todo-4`
+- `feat/edit-todo-5`
+- `feat/delete-todo-6`
+- `feat/toggle-complete-7`
+- `feat/category-management-8`
+- `feat/filters-sorting-9`
+- `feat/local-storage-10`
+- `feat/core-flows-11`
 
-각 기능은 GitHub Issue 1개, Pull Request 1개로 나누는 것을 추천합니다.
+## 실행 명령어
+
+```bash
+npm install
+npm run dev
+```
