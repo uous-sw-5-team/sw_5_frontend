@@ -1,7 +1,11 @@
-export function App() {
+import React from "react";
+import MainPage from "../pages/MainPage"; // 방금 만든 메인 레이아웃 페이지 가져오기
+
+export const App: React.FC = () => {
   return (
-    <main>
-      <h1>Todo Scheduler Web</h1>
-    </main>
+    <>
+      {/* 화면에 메인 레이아웃을 렌더링합니다 */}
+      <MainPage />
+    </>
   );
-}
+};
