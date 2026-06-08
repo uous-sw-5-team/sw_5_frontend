@@ -1,13 +1,61 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const Calendar = () => {
+  const today = new Date();
+  const year = 2024;
+  const month = 6; // 6월
+
+  const firstDay = new Date(year, month - 1, 1).getDay(); // 첫째 날 요일 (0=일)
+  const lastDate = new Date(year, month, 0).getDate(); // 마지막 날짜
+
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+
+  // 빈 칸 + 날짜 배열 생성
+  const cells = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: lastDate }, (_, i) => i + 1),
+  ];
+
+  const isToday = (date: number) =>
+    today.getFullYear() === year &&
+    today.getMonth() === month - 1 &&
+    today.getDate() === date;
+
+  return (
+    <CalendarContainer>
+      <CalendarHeader>
+        <Title>2024년 6월 ▾</Title>
+        <NavButtons>
+          <button>{'<'}</button>
+          <button>{'>'}</button>
+        </NavButtons>
+      </CalendarHeader>
+
+      <Grid>
+        {days.map((day, i) => (
+          <DayHeader key={day} isSunday={i === 0}>{day}</DayHeader>
+        ))}
+        {cells.map((date, i) => (
+          <Cell key={i} isEmpty={date === null} isToday={date !== null && isToday(date)}>
+            {date !== null && (
+              <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+            )}
+          </Cell>
+        ))}
+      </Grid>
+    </CalendarContainer>
+  );
+};
+
+export default Calendar;
+
 const CalendarContainer = styled.div`
   width: 100%;
   background: white;
   border: 1px solid #edebeb;
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  overflow: hidden; /* 테두리 밖으로 삐져나가는 것 방지 */
+  overflow: hidden;
 `;
 
 const CalendarHeader = styled.div`
@@ -15,7 +63,7 @@ const CalendarHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 1px solid #edebeb; /* 헤더와 그리드 구분선 */
+  border-bottom: 1px solid #edebeb;
 `;
 
 const Title = styled.h2`
@@ -28,7 +76,7 @@ const Title = styled.h2`
 const NavButtons = styled.div`
   display: flex;
   gap: 10px;
-  
+
   button {
     width: 40px;
     height: 40px;
@@ -48,55 +96,33 @@ const NavButtons = styled.div`
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  /* 테두리 겹침 방지 */
   border-left: 1px solid #edebeb;
 `;
 
-const Cell = styled.div`
+const DayHeader = styled.div<{ isSunday: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
-  padding: 10px;
-  min-height: 100px;
-  font-size: 14px;
-  color: #031635;
-  background: white;
-`;
-
-const DayHeader = styled(Cell)`
-  font-weight: 600;
+  padding: 12px 0;
   text-align: center;
-  padding: 15px 0;
-  min-height: auto;
-  border-bottom: 1px solid #edebeb;
+  font-weight: 600;
+  font-size: 14px;
+  color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
   background: #fafafa;
 `;
 
-const Calendar = () => {
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
-  const dates = Array.from({ length: 35 }, (_, i) => i + 1); // 7x5 그리드
+const Cell = styled.div<{ isEmpty: boolean; isToday: boolean }>`
+  border-right: 1px solid #edebeb;
+  border-bottom: 1px solid #edebeb;
+  min-height: 110px;
+  padding: 10px;
+  background: ${({ isEmpty }) => (isEmpty ? '#f5f0e8' : 'white')};
+  outline: ${({ isToday }) => (isToday ? '2px solid #f4a0a0' : 'none')};
+  outline-offset: -2px;
+  box-sizing: border-box;
+`;
 
-  return (
-    <CalendarContainer>
-      <CalendarHeader>
-        <Title>2024년 6월 ▾</Title>
-        <NavButtons>
-          <button>{'<'}</button>
-          <button>{'>'}</button>
-        </NavButtons>
-      </CalendarHeader>
-
-      <Grid>
-        {days.map(day => (
-          <DayHeader key={day}>{day}</DayHeader>
-        ))}
-        {dates.map(date => (
-          <Cell key={date}>
-            {date <= 30 ? date : ''}
-          </Cell>
-        ))}
-      </Grid>
-    </CalendarContainer>
-  );
-};
-
-export default Calendar;
+const DateNumber = styled.span<{ isSunday: boolean }>`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+`;
