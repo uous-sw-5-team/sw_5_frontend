@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Header from '../components/Header'; // 📌 9번 작업: 완성된 헤더 컴포넌트 불러오기
 
 // --- ♻️ styled-components 디자인 정의 영역 ---
 
@@ -17,7 +18,7 @@ const MainContent = styled.main`
   display: grid;
   grid-template-columns: 1.78fr 1fr; /* 시안의 64% : 36% 비율 */
   gap: 32px;
-  padding: 40px;
+  padding: 32px 40px 40px 40px; /* 헤더 아래 여백 최적화 */
   flex: 1;
   max-width: 1600px;
   width: 100%;
@@ -103,7 +104,8 @@ const GuideText = styled.p`
 export const MainPage = () => {
   return (
     <PageContainer>
-      {/* 📌 규칙 준수: 헤더(<Header />)는 7번 브랜치 작업이므로 완벽히 비워둡니다. */}
+      {/* 📌 9번 작업: 시안과 동일한 Study Planner 상단 헤더 배치 */}
+      <Header />
       
       <MainContent>
         {/* 1. 좌측 캘린더 영역 카드 */}
