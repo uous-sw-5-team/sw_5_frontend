@@ -1,125 +1,137 @@
 import React from 'react';
+import styled from 'styled-components';
 
-const MainPage: React.FC = () => {
+// --- ♻️ styled-components 디자인 정의 영역 ---
+
+// 전체 배경 컨테이너
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #faf8f5; /* 시안 특유의 은은한 아이보리 미색 배경 */
+`;
+
+// 좌우 분할 그리드가 적용되는 메인 콘텐츠 영역
+const MainContent = styled.main`
+  display: grid;
+  grid-template-columns: 1.78fr 1fr; /* 시안의 64% : 36% 비율 */
+  gap: 32px;
+  padding: 40px;
+  flex: 1;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+`;
+
+// 흰색 라운드 카드 구조
+const ContentCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 40px; /* 원본의 크고 부드러운 라운딩 값 반영 */
+  padding: 56px 48px;  /* 내부 여백 */
+  min-height: 640px;   /* 시원하게 떨어지는 카드 높이 */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02); /* 부드러운 그림자 */
+  box-sizing: border-box;
+`;
+
+// 달력 년/월 타이틀 스타일
+const CalendarTitle = styled.h1`
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 48px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+// 날짜 헤더 영역 (우측 카드용)
+const DateHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 48px;
+`;
+
+// 6월 15일 일요일 텍스트 정렬 Layout
+const DateTextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const DateLargeText = styled.h2`
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+`;
+
+// '+ 새 일정' 버튼 스타일
+const NewPlanButton = styled.button`
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    background-color: #222222;
+  }
+`;
+
+// 중앙 안내용 더미 가이드 텍스트 스타일
+const GuideText = styled.p`
+  font-size: 16px;
+  color: #b0b0b0; /* 원본 특유의 연한 회색 본문 텍스트 색상 */
+  line-height: 1.8;
+  text-align: center;
+  margin: 180px auto 0 auto; /* 중앙 배치를 위한 상단 여백 설정 */
+  max-width: 320px;
+  word-break: keep-all;
+`;
+
+export const MainPage = () => {
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#f9f6f0', // 1. 시안 특유의 따뜻하고 밝은 미색 배경
-      // 패턴 느낌을 내고 싶다면 아래 주석을 해제하세요 (가벼운 도트 배경 효과)
-      // backgroundImage: 'radial-gradient(#e5dec9 1px, transparent 1px)',
-      // backgroundSize: '24px 24px',
-      padding: '40px 60px',
-      boxSizing: 'border-box',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
+    <PageContainer>
+      {/* 📌 규칙 준수: 헤더(<Header />)는 7번 브랜치 작업이므로 완벽히 비워둡니다. */}
       
-      {/* [HEADER] 상단 네비게이션 바 */}
-      <header style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        maxWidth: '1400px',
-        margin: '0 auto 40px auto'
-      }}>
-        {/* 로고 영역 (추후 컴포넌트 분리) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '32px', height: '32px', backgroundColor: '#a78bfa', borderRadius: '8px' }}></div> {/* 임시 로고 아이콘 */}
-          <span style={{ fontSize: '28px', fontWeight: '800', color: '#030712', letterSpacing: '-0.5px' }}>Study Planner</span>
-        </div>
-        {/* 버튼 영역 */}
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', backgroundColor: '#e2e8f0', color: '#1e293b', fontWeight: '600', cursor: 'pointer' }}>로그인</button>
-          <button style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', backgroundColor: '#030712', color: 'white', fontWeight: '600', cursor: 'pointer' }}>회원가입</button>
-        </div>
-      </header>
-
-      {/* [MAIN LAYOUT] 2분할 그리드 */}
-      <main style={{
-        display: 'grid',
-        gridTemplateColumns: '1.8fr 1fr', // 시안의 좌우 황금 비율 반영 (약 64% : 36%)
-        gap: '40px',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        alignItems: 'start'
-      }}>
-        
-        {/* ----------------- 좌측 영역: 달력 판넬 ----------------- */}
-        <section style={{
-          backgroundColor: 'white',
-          borderRadius: '24px', // 시안의 부드럽고 둥근 모서리 반영
-          padding: '40px',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02)', // 아주 은은한 그림자
-          border: '1px solid rgba(0, 0, 0, 0.03)',
-          minHeight: '750px'
-        }}>
-          {/* 달력 헤더 예시 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '30px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#111827' }}>2024년 6월</h2>
-            <span style={{ fontSize: '16px', cursor: 'pointer' }}>▼</span>
-          </div>
-          
-          <div style={{ color: '#94a3b8', textAlign: 'center', marginTop: '100px' }}>
+      <MainContent>
+        {/* 1. 좌측 캘린더 영역 카드 */}
+        <ContentCard>
+          <CalendarTitle>
+            2024년 6월 <span style={{ fontSize: '20px', color: '#666', marginLeft: '4px' }}>▼</span>
+          </CalendarTitle>
+          <GuideText>
             [이 영역에 들어갈 Calendar 컴포넌트 스타일은 components에서 완성할 예정입니다]
-          </div>
-        </section>
+          </GuideText>
+        </ContentCard>
 
-
-        {/* ----------------- 우측 영역: 일정 및 집중도 ----------------- */}
-        <section style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '30px'
-        }}>
-          
-          {/* 우상단: 일정 리스트 판넬 */}
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '24px',
-            padding: '40px 32px',
-            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.02)',
-            border: '1px solid rgba(0, 0, 0, 0.03)',
-            minHeight: '480px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>6월 15일 할 일</h3>
-              <button style={{ backgroundColor: '#030712', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}>+ 새 일정</button>
-            </div>
-            
-            <div style={{ color: '#94a3b8', textAlign: 'center', marginTop: '50px' }}>
-              [이 영역에 들어갈 TodoList 카드들은 components에서 구현하여 조립합니다]
-            </div>
-          </div>
-
-          {/* 우하단: 오늘의 집중도 판넬 */}
-          <div style={{
-            backgroundColor: '#07132b', // 시안의 딥한 네이비/다크블루 색상 반영
-            color: 'white',
-            borderRadius: '24px',
-            padding: '32px',
-            boxShadow: '0 10px 25px -5px rgba(7, 19, 43, 0.2)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#fbbf24' }}>⚡</span>
-                <span style={{ fontSize: '18px', fontWeight: '600', color: '#f1f5f9' }}>오늘의 집중도</span>
-              </div>
-              <span style={{ fontSize: '28px', fontWeight: '800', color: '#38bdf8' }}>0%</span>
-            </div>
-            
-            {/* 게이지 바 배경 */}
-            <div style={{ width: '100%', height: '12px', backgroundColor: '#1e293b', borderRadius: '999px', marginBottom: '20px' }}>
-              {/* 실제 채워지는 바 (현재 0%) */}
-              <div style={{ width: '0%', height: '100%', backgroundColor: '#38bdf8', borderRadius: '999px' }}></div>
-            </div>
-            
-            <p style={{ color: '#94a3b8', fontSize: '15px', margin: 0 }}>목표를 향해 달려볼까요?</p>
-          </div>
-
-        </section>
-
-      </main>
-    </div>
+        {/* 2. 우측 투두 리스트 영역 카드 */}
+        <ContentCard>
+          <DateHeader>
+            <DateTextGroup>
+              <DateLargeText>6월 15일</DateLargeText>
+              <DateLargeText>일요일</DateLargeText>
+            </DateTextGroup>
+            <NewPlanButton>+ 새 일정</NewPlanButton>
+          </DateHeader>
+          <GuideText>
+            [이 영역에 들어갈 TodoList 카드들은 components에서 구현하여 조립합니다]
+          </GuideText>
+        </ContentCard>
+      </MainContent>
+    </PageContainer>
   );
 };
 
-export default MainPage;    
+export default MainPage;
