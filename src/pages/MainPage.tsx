@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
 import TodoList from '../components/TodoList';
+import FocusTracker from '../components/FocusTracker';
 
 const PageContainer = styled.div`
   display: flex;
@@ -78,6 +79,7 @@ export const MainPage = () => {
             <NewPlanButton>+ 새 일정</NewPlanButton>
           </DateHeader>
           <TodoList />
+          <FocusTracker percentage={0} />
         </ContentCard>
       </MainContent>
     </PageContainer>
