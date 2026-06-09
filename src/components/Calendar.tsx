@@ -7,6 +7,11 @@ interface CalendarProps {
   uploadedImages?: Record<string, string>;
 }
 
+const mockExams: Record<string, string> = {
+  '2026-06-12': '모의고사',
+  '2026-06-25': '모의고사',
+};
+
 const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarProps) => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -98,6 +103,7 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
         {cells.map((date, i) => {
           const dateStr = date !== null ? getDateStr(date) : null;
           const image = dateStr ? uploadedImages[dateStr] : null;
+          const examLabel = dateStr ? mockExams[dateStr] : null;
           return (
             <Cell
               key={i}
@@ -107,7 +113,10 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
             >
               {date !== null && (
                 <>
-                  <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+                  <CellTopRow>
+                    <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+                    {examLabel && <ExamBadge>{examLabel}</ExamBadge>}
+                  </CellTopRow>
                   {image && (
                     <ThumbnailWrapper>
                       <CellThumbnail src={image} alt="사진" />
@@ -277,10 +286,27 @@ const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
   }
 `;
 
+const CellTopRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const DateNumber = styled.span<{ isSunday: boolean }>`
   font-size: 13px;
   font-weight: 500;
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+`;
+
+const ExamBadge = styled.div`
+  display: inline-block;
+  background: #fef9c3;
+  color: #854d0e;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+  white-space: nowrap;
 `;
 
 const ThumbnailWrapper = styled.div`
