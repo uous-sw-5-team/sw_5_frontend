@@ -13,6 +13,7 @@ interface TodoListProps {
 
 const TodoList = ({ todos, onToggle, onDelete, onSave, remaining }: TodoListProps) => {
   const completed = todos.filter(t => t.completed).length;
+  const allCompleted = todos.length > 0 && todos.every(t => t.completed);
 
   return (
     <ListWrapper>
@@ -29,6 +30,14 @@ const TodoList = ({ todos, onToggle, onDelete, onSave, remaining }: TodoListProp
           onSave={onSave}
         />
       ))}
+      {allCompleted && (
+        <CompleteCard>
+          <CompleteIcon>✅</CompleteIcon>
+          <CompleteTitle>모든 할 일을 완료했습니다!</CompleteTitle>
+          <CompleteSubtitle>학습 노트 사진을 업로드하고 인증하세요.</CompleteSubtitle>
+          <UploadButton>⬆ 사진 업로드</UploadButton>
+        </CompleteCard>
+      )}
     </ListWrapper>
   );
 };
@@ -54,4 +63,53 @@ const Badge = styled.span<{ type: 'completed' | 'remaining' }>`
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 20px;
+`;
+
+const CompleteCard = styled.div`
+  border: 2px dashed #f4a0a0;
+  border-radius: 20px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  background: #fff8f8;
+`;
+
+const CompleteIcon = styled.div`
+  font-size: 32px;
+  background: #ffe0e0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+`;
+
+const CompleteTitle = styled.div`
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a1a;
+`;
+
+const CompleteSubtitle = styled.div`
+  font-size: 13px;
+  color: #aaaaaa;
+  margin-bottom: 8px;
+`;
+
+const UploadButton = styled.button`
+  width: 100%;
+  background: #031635;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  &:hover { background: #0a2a5e; }
 `;
