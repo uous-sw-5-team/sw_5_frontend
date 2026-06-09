@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
@@ -158,21 +158,36 @@ const CancelButton = styled.button`
   color: #888888;
 `;
 
+const toDateStr = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+const toKoreanDate = (date: Date) =>
+  `${date.getMonth() + 1}월 ${date.getDate()}일 할 일`;
+
 export const MainPage = () => {
-  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo, remaining, percentage } = useTodos();
-  const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } = useCreateTodo(addTodo);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo, percentage } = useTodos();
+  const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } = useCreateTodo(addTodo, selectedDate);
+
+  const dateStr = toDateStr(selectedDate);
+  const filteredTodos = todos.filter(t => t.date === dateStr);
+  const remaining = filteredTodos.filter(t => !t.completed).length;
+
+  const handleAddTodo = () => {
+    openForm();
+  };
 
   return (
     <PageContainer>
       <Header />
       <MainContent>
         <ContentCard>
-          <Calendar />
+          <Calendar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
         </ContentCard>
         <ContentCard>
           <DateHeader>
-            <DateLargeText>6월 15일 할 일</DateLargeText>
-            <NewPlanButton onClick={openForm}>+ 새 일정</NewPlanButton>
+            <DateLargeText>{toKoreanDate(selectedDate)}</DateLargeText>
+            <NewPlanButton onClick={handleAddTodo}>+ 새 일정</NewPlanButton>
           </DateHeader>
           {isFormOpen && (
             <FormCard>
@@ -213,7 +228,7 @@ export const MainPage = () => {
             </FormCard>
           )}
           <TodoList
-            todos={todos}
+            todos={filteredTodos}
             onToggle={toggleTodo}
             onDelete={deleteTodo}
             onSave={updateTodo}
