@@ -233,11 +233,35 @@ const HiddenFileInput = styled.input`
   display: none;
 `;
 
+const PreviewWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 const PreviewImage = styled.img`
   width: 100%;
   border-radius: 10px;
   object-fit: cover;
   max-height: 120px;
+  display: block;
+`;
+
+const DeleteImageButton = styled.button`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover { background: rgba(0, 0, 0, 0.8); }
 `;
 
 const toDateStr = (date: Date) =>
@@ -248,7 +272,7 @@ const toKoreanDate = (date: Date) =>
 
 export const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos();
@@ -267,9 +291,19 @@ export const MainPage = () => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => setUploadedImage(reader.result as string);
+      reader.onload = () => {
+        setUploadedImages(prev => ({ ...prev, [dateStr]: reader.result as string }));
+      };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleDeleteImage = () => {
+    setUploadedImages(prev => {
+      const next = { ...prev };
+      delete next[dateStr];
+      return next;
+    });
   };
 
   return (
@@ -277,7 +311,11 @@ export const MainPage = () => {
       <Header />
       <MainContent>
         <ContentCard>
-          <Calendar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
+          <Calendar
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+            uploadedImages={uploadedImages}
+          />
         </ContentCard>
         <RightColumn>
           <RightCard>
@@ -336,17 +374,25 @@ export const MainPage = () => {
               <CompleteCard>
                 <CompleteIcon>✅</CompleteIcon>
                 <CompleteTitle>모든 할 일을 완료했습니다!</CompleteTitle>
-                <CompleteSubtitle>학습 노트 사진을 업로드하고 인증하세요.</CompleteSubtitle>
-                {uploadedImage && <PreviewImage src={uploadedImage} alt="업로드 사진" />}
-                <HiddenFileInput
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                />
-                <UploadButton onClick={() => fileInputRef.current?.click()}>
-                  ⬆ 사진 업로드
-                </UploadButton>
+                {uploadedImages[dateStr] ? (
+                  <PreviewWrapper>
+                    <PreviewImage src={uploadedImages[dateStr]} alt="업로드 사진" />
+                    <DeleteImageButton onClick={handleDeleteImage}>✕</DeleteImageButton>
+                  </PreviewWrapper>
+                ) : (
+                  <>
+                    <CompleteSubtitle>학습 노트 사진을 업로드하고 인증하세요.</CompleteSubtitle>
+                    <HiddenFileInput
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                    />
+                    <UploadButton onClick={() => fileInputRef.current?.click()}>
+                      ⬆ 사진 업로드
+                    </UploadButton>
+                  </>
+                )}
               </CompleteCard>
             )}
           </RightCard>
