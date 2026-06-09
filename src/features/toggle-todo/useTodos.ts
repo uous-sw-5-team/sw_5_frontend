@@ -6,7 +6,7 @@ export interface Todo {
   time: string;
   description: string;
   completed: boolean;
-  date: string; // "YYYY-MM-DD"
+  date: string;
 }
 
 const today = new Date();
@@ -18,15 +18,27 @@ const initialTodos: Todo[] = [
   { id: 3, title: '수학 퀴즈 연습', time: '오후 09:00', description: '모의고사 세트 B를 완료하세요. 계산기 사용 금지.', completed: false, date: todayStr },
 ];
 
+const timeToMinutes = (time: string): number => {
+  const [period, hhmm] = time.split(' ');
+  const [h, m] = hhmm.split(':').map(Number);
+  const hour = period === '오전'
+    ? (h === 12 ? 0 : h)
+    : (h === 12 ? 12 : h + 12);
+  return hour * 60 + m;
+};
+
+const sortByTime = (todos: Todo[]) =>
+  [...todos].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
 export const useTodos = () => {
-  const [todos, setTodos] = useState<Todo[]>(initialTodos);
+  const [todos, setTodos] = useState<Todo[]>(sortByTime(initialTodos));
 
   const toggleTodo = (id: number) => {
     setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
   const addTodo = (todo: Todo) => {
-    setTodos(prev => [...prev, todo]);
+    setTodos(prev => sortByTime([...prev, todo]));
   };
 
   const deleteTodo = (id: number) => {
@@ -34,7 +46,7 @@ export const useTodos = () => {
   };
 
   const updateTodo = (id: number, updated: Partial<Todo>) => {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, ...updated } : t));
+    setTodos(prev => sortByTime(prev.map(t => t.id === id ? { ...t, ...updated } : t)));
   };
 
   const remaining = todos.filter(t => !t.completed).length;
