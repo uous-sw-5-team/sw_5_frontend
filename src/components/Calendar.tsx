@@ -1,31 +1,39 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Calendar = () => {
-  const today = new Date();
-  const year = 2024;
-  const month = 6; // 6월
+interface CalendarProps {
+  selectedDate: Date;
+  onDateSelect: (date: Date) => void;
+}
 
-  const firstDay = new Date(year, month - 1, 1).getDay(); // 첫째 날 요일 (0=일)
-  const lastDate = new Date(year, month, 0).getDate(); // 마지막 날짜
+const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const lastDate = new Date(year, month, 0).getDate();
 
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
-  // 빈 칸 + 날짜 배열 생성
   const cells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: lastDate }, (_, i) => i + 1),
   ];
 
-  const isToday = (date: number) =>
-    today.getFullYear() === year &&
-    today.getMonth() === month - 1 &&
-    today.getDate() === date;
+  const isSelected = (date: number) =>
+    selectedDate.getFullYear() === year &&
+    selectedDate.getMonth() === month - 1 &&
+    selectedDate.getDate() === date;
+
+  const handleClick = (date: number) => {
+    onDateSelect(new Date(year, month - 1, date));
+  };
 
   return (
     <CalendarContainer>
       <CalendarHeader>
-        <Title>2024년 6월 ▾</Title>
+        <Title>{year}년 {month}월 ▾</Title>
         <NavButtons>
           <button>{'<'}</button>
           <button>{'>'}</button>
@@ -37,9 +45,16 @@ const Calendar = () => {
           <DayHeader key={day} isSunday={i === 0}>{day}</DayHeader>
         ))}
         {cells.map((date, i) => (
-          <Cell key={i} isEmpty={date === null} isToday={date !== null && isToday(date)}>
+          <Cell
+            key={i}
+            isEmpty={date === null}
+            isSelected={date !== null && isSelected(date)}
+            onClick={() => date !== null && handleClick(date)}
+          >
             {date !== null && (
-              <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+              <DateNumber isSunday={i % 7 === 0}>
+                {date}
+              </DateNumber>
             )}
           </Cell>
         ))}
@@ -110,15 +125,20 @@ const DayHeader = styled.div<{ isSunday: boolean }>`
   background: #fafafa;
 `;
 
-const Cell = styled.div<{ isEmpty: boolean; isToday: boolean }>`
+const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
   min-height: 110px;
   padding: 10px;
-  background: ${({ isEmpty }) => (isEmpty ? '#f5f0e8' : 'white')};
-  outline: ${({ isToday }) => (isToday ? '2px solid #f4a0a0' : 'none')};
+  background: ${({ isEmpty, isSelected }) =>
+    isSelected ? '#fff3f3' : isEmpty ? '#f5f0e8' : 'white'};
+  outline: ${({ isSelected }) => (isSelected ? '2px solid #e05c5c' : 'none')};
   outline-offset: -2px;
   box-sizing: border-box;
+  cursor: ${({ isEmpty }) => (isEmpty ? 'default' : 'pointer')};
+  &:hover {
+    background: ${({ isEmpty }) => (isEmpty ? '#f5f0e8' : '#fff8f8')};
+  }
 `;
 
 const DateNumber = styled.span<{ isSunday: boolean }>`
