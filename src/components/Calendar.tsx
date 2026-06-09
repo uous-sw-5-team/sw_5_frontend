@@ -16,9 +16,11 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
   const lastDate = new Date(year, month, 0).getDate();
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
+  const totalCells = Math.ceil((firstDay + lastDate) / 7) * 7;
   const cells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: lastDate }, (_, i) => i + 1),
+    ...Array(totalCells - firstDay - lastDate).fill(null),
   ];
 
   const isSelected = (date: number) =>
