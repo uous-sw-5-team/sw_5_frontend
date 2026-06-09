@@ -68,11 +68,7 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
             <DropdownLabel>📅 연도 선택</DropdownLabel>
             <YearList>
               {yearList.map(y => (
-                <YearItem
-                  key={y}
-                  isSelected={y === year}
-                  onClick={() => handleYearSelect(y)}
-                >
+                <YearItem key={y} isSelected={y === year} onClick={() => handleYearSelect(y)}>
                   {y}년
                 </YearItem>
               ))}
@@ -82,11 +78,7 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
             <DropdownLabel>📅 월 선택</DropdownLabel>
             <MonthGrid>
               {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                <MonthItem
-                  key={m}
-                  isSelected={m === month}
-                  onClick={() => handleMonthSelect(m)}
-                >
+                <MonthItem key={m} isSelected={m === month} onClick={() => handleMonthSelect(m)}>
                   {m}월
                 </MonthItem>
               ))}
@@ -131,12 +123,12 @@ const CalendarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  padding: 14px 20px;
   border-bottom: 1px solid #edebeb;
 `;
 
 const Title = styled.h2`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   color: #031635;
   margin: 0;
@@ -147,10 +139,10 @@ const Title = styled.h2`
 
 const NavButtons = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 8px;
   button {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid #edebeb;
     background: white;
@@ -166,18 +158,18 @@ const NavButtons = styled.div`
 
 const Dropdown = styled.div`
   position: absolute;
-  top: 80px;
+  top: 64px;
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border: 2px solid #d0ccc8;
   border-radius: 16px;
   background: white;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const DropdownSection = styled.div`
@@ -224,7 +216,7 @@ const MonthGrid = styled.div`
 `;
 
 const MonthItem = styled.div<{ isSelected: boolean }>`
-  padding: 10px 0;
+  padding: 8px 0;
   text-align: center;
   border-radius: 10px;
   font-size: 14px;
@@ -245,10 +237,10 @@ const Grid = styled.div`
 const DayHeader = styled.div<{ isSunday: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
-  padding: 12px 0;
+  padding: 8px 0;
   text-align: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
   background: #fafafa;
 `;
@@ -256,8 +248,8 @@ const DayHeader = styled.div<{ isSunday: boolean }>`
 const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
-  min-height: 110px;
-  padding: 10px;
+  min-height: 88px;
+  padding: 8px;
   background: ${({ isEmpty, isSelected }) =>
     isSelected ? '#fff3f3' : isEmpty ? '#f5f0e8' : 'white'};
   outline: ${({ isSelected }) => (isSelected ? '2px solid #e05c5c' : 'none')};
@@ -270,7 +262,7 @@ const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
 `;
 
 const DateNumber = styled.span<{ isSunday: boolean }>`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
 `;
