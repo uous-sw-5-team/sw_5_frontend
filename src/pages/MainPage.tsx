@@ -159,7 +159,7 @@ const CancelButton = styled.button`
 `;
 
 export const MainPage = () => {
-  const { todos, toggleTodo, addTodo, remaining, percentage } = useTodos();
+  const { todos, toggleTodo, addTodo, deleteTodo, remaining, percentage } = useTodos();
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } = useCreateTodo(addTodo);
 
   return (
@@ -215,6 +215,7 @@ export const MainPage = () => {
           <TodoList
             todos={todos}
             onToggle={toggleTodo}
+            onDelete={deleteTodo}
             remaining={remaining}
           />
           <FocusTracker percentage={percentage} />

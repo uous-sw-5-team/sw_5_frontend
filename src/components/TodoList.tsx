@@ -6,10 +6,11 @@ import { Todo } from '../features/toggle-todo/useTodos';
 interface TodoListProps {
   todos: Todo[];
   onToggle: (id: number) => void;
+  onDelete: (id: number) => void;
   remaining: number;
 }
 
-const TodoList = ({ todos, onToggle, remaining }: TodoListProps) => {
+const TodoList = ({ todos, onToggle, onDelete, remaining }: TodoListProps) => {
   return (
     <ListWrapper>
       <Badge>{remaining}개 남음</Badge>
@@ -21,6 +22,7 @@ const TodoList = ({ todos, onToggle, remaining }: TodoListProps) => {
           description={todo.description}
           completed={todo.completed}
           onToggle={() => onToggle(todo.id)}
+          onDelete={() => onDelete(todo.id)}
         />
       ))}
     </ListWrapper>

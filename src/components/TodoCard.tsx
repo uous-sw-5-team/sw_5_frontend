@@ -7,9 +7,10 @@ interface TodoCardProps {
   description: string;
   completed: boolean;
   onToggle: () => void;
+  onDelete: () => void;
 }
 
-const TodoCard = ({ title, time, description, completed, onToggle }: TodoCardProps) => {
+const TodoCard = ({ title, time, description, completed, onToggle, onDelete }: TodoCardProps) => {
   return (
     <CardWrapper completed={completed}>
       <TopRow>
@@ -19,7 +20,7 @@ const TodoCard = ({ title, time, description, completed, onToggle }: TodoCardPro
         </TitleArea>
         <TimeAndEdit>
           <TimeText>⏰ {time}</TimeText>
-          <EditButton>✏️</EditButton>
+          <DeleteButton onClick={onDelete}>🗑️</DeleteButton>
         </TimeAndEdit>
       </TopRow>
       <CardDescription>{description}</CardDescription>
@@ -85,12 +86,12 @@ const TimeText = styled.span`
   white-space: nowrap;
 `;
 
-const EditButton = styled.button`
+const DeleteButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
   font-size: 14px;
   padding: 0;
   color: #aaaaaa;
-  &:hover { color: #555555; }
+  &:hover { color: #e05c5c; }
 `;
