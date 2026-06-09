@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 interface CalendarProps {
@@ -8,8 +8,8 @@ interface CalendarProps {
 
 const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth() + 1);
 
   const firstDay = new Date(year, month - 1, 1).getDay();
   const lastDate = new Date(year, month, 0).getDate();
@@ -30,13 +30,31 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
     onDateSelect(new Date(year, month - 1, date));
   };
 
+  const handlePrev = () => {
+    if (month === 1) {
+      setYear(y => y - 1);
+      setMonth(12);
+    } else {
+      setMonth(m => m - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (month === 12) {
+      setYear(y => y + 1);
+      setMonth(1);
+    } else {
+      setMonth(m => m + 1);
+    }
+  };
+
   return (
     <CalendarContainer>
       <CalendarHeader>
         <Title>{year}년 {month}월 ▾</Title>
         <NavButtons>
-          <button>{'<'}</button>
-          <button>{'>'}</button>
+          <button onClick={handlePrev}>{'<'}</button>
+          <button onClick={handleNext}>{'>'}</button>
         </NavButtons>
       </CalendarHeader>
 
