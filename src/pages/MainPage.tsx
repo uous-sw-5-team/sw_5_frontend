@@ -10,18 +10,20 @@ import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   width: 100%;
   background-color: #faf8f5;
 `;
 
 const MainContent = styled.main`
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
-  padding: 32px 40px 40px 40px;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  padding: 16px 28px 20px 28px;
   flex: 1;
-  max-width: 1600px;
+  min-height: 0;
+  max-width: 1100px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
@@ -29,22 +31,34 @@ const MainContent = styled.main`
 
 const ContentCard = styled.div`
   background-color: #ffffff;
-  border-radius: 40px;
-  padding: 40px 36px;
-  min-height: 640px;
+  border-radius: 24px;
+  padding: 16px 22px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
   box-sizing: border-box;
+  overflow: hidden;
+`;
+
+const RightCard = styled(ContentCard)`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const TodoScrollArea = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 `;
 
 const DateHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  flex-shrink: 0;
 `;
 
 const DateLargeText = styled.h2`
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   color: #1a1a1a;
   margin: 0;
@@ -55,26 +69,25 @@ const NewPlanButton = styled.button`
   color: #ffffff;
   border: none;
   border-radius: 20px;
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   &:hover { background-color: #222222; }
 `;
 
 const FormCard = styled.div`
   border: 1px solid #f0eeee;
   border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 12px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex-shrink: 0;
 `;
 
 const Input = styled.input`
@@ -167,15 +180,12 @@ const toKoreanDate = (date: Date) =>
 export const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { todos, toggleTodo, addTodo, deleteTodo, updateTodo, percentage } = useTodos();
-  const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } = useCreateTodo(addTodo, selectedDate);
+  const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
+    useCreateTodo(addTodo, selectedDate);
 
   const dateStr = toDateStr(selectedDate);
   const filteredTodos = todos.filter(t => t.date === dateStr);
   const remaining = filteredTodos.filter(t => !t.completed).length;
-
-  const handleAddTodo = () => {
-    openForm();
-  };
 
   return (
     <PageContainer>
@@ -184,10 +194,10 @@ export const MainPage = () => {
         <ContentCard>
           <Calendar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
         </ContentCard>
-        <ContentCard>
+        <RightCard>
           <DateHeader>
             <DateLargeText>{toKoreanDate(selectedDate)}</DateLargeText>
-            <NewPlanButton onClick={handleAddTodo}>+ 새 일정</NewPlanButton>
+            <NewPlanButton onClick={openForm}>+ 새 일정</NewPlanButton>
           </DateHeader>
           {isFormOpen && (
             <FormCard>
@@ -227,15 +237,17 @@ export const MainPage = () => {
               </FormButtons>
             </FormCard>
           )}
-          <TodoList
-            todos={filteredTodos}
-            onToggle={toggleTodo}
-            onDelete={deleteTodo}
-            onSave={updateTodo}
-            remaining={remaining}
-          />
+          <TodoScrollArea>
+            <TodoList
+              todos={filteredTodos}
+              onToggle={toggleTodo}
+              onDelete={deleteTodo}
+              onSave={updateTodo}
+              remaining={remaining}
+            />
+          </TodoScrollArea>
           <FocusTracker percentage={percentage} />
-        </ContentCard>
+        </RightCard>
       </MainContent>
     </PageContainer>
   );
