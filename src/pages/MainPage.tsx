@@ -189,13 +189,16 @@ const toKoreanDate = (date: Date) =>
 
 export const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo, percentage } = useTodos();
+  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos();
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
     useCreateTodo(addTodo, selectedDate);
 
   const dateStr = toDateStr(selectedDate);
   const filteredTodos = todos.filter(t => t.date === dateStr);
   const remaining = filteredTodos.filter(t => !t.completed).length;
+  const filteredPercentage = filteredTodos.length > 0
+    ? Math.round((filteredTodos.filter(t => t.completed).length / filteredTodos.length) * 100)
+    : 0;
 
   return (
     <PageContainer>
@@ -258,7 +261,7 @@ export const MainPage = () => {
               />
             </TodoScrollArea>
           </RightCard>
-          <FocusTracker percentage={percentage} />
+          <FocusTracker percentage={filteredPercentage} />
         </RightColumn>
       </MainContent>
     </PageContainer>
