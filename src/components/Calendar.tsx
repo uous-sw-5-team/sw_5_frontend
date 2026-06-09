@@ -108,7 +108,12 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
               {date !== null && (
                 <>
                   <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
-                  {image && <CellThumbnail src={image} alt="사진" />}
+                  {image && (
+                    <ThumbnailWrapper>
+                      <CellThumbnail src={image} alt="사진" />
+                      <EnlargedImage src={image} alt="확대" />
+                    </ThumbnailWrapper>
+                  )}
                 </>
               )}
             </Cell>
@@ -278,11 +283,35 @@ const DateNumber = styled.span<{ isSunday: boolean }>`
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
 `;
 
+const ThumbnailWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  margin-top: 4px;
+`;
+
 const CellThumbnail = styled.img`
   width: 100%;
   height: 52px;
   object-fit: cover;
   border-radius: 6px;
-  margin-top: 4px;
   display: block;
+`;
+
+const EnlargedImage = styled.img`
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  z-index: 200;
+  pointer-events: none;
+
+  ${ThumbnailWrapper}:hover & {
+    display: block;
+  }
 `;
