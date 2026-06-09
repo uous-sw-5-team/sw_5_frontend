@@ -5,6 +5,7 @@ import Calendar from '../components/Calendar';
 import TodoList from '../components/TodoList';
 import FocusTracker from '../components/FocusTracker';
 import { useTodos } from '../features/toggle-todo/useTodos';
+import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 
 const PageContainer = styled.div`
   display: flex;
@@ -66,8 +67,100 @@ const NewPlanButton = styled.button`
   &:hover { background-color: #222222; }
 `;
 
+const FormCard = styled.div`
+  border: 1px solid #f0eeee;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #eeeeee;
+  padding: 6px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  outline: none;
+  box-sizing: border-box;
+  &:focus { border-bottom-color: #000000; }
+`;
+
+const TimeInputRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #888888;
+  background-color: #f9f9f9;
+  border: 1px solid #eeeeee;
+  border-radius: 10px;
+  padding: 6px 12px;
+  width: fit-content;
+`;
+
+const TimeInput = styled.input`
+  width: 36px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  outline: none;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button { -webkit-appearance: none; }
+`;
+
+const Textarea = styled.textarea`
+  width: 100%;
+  border: 1px solid #eeeeee;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #888888;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+  &:focus { border-color: #000000; }
+`;
+
+const FormButtons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+`;
+
+const SaveButton = styled.button`
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+const CancelButton = styled.button`
+  background: none;
+  border: 1px solid #eeeeee;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #888888;
+`;
+
 export const MainPage = () => {
-  const { todos, toggleTodo, remaining, percentage } = useTodos();
+  const { todos, toggleTodo, addTodo, remaining, percentage } = useTodos();
+  const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } = useCreateTodo(addTodo);
 
   return (
     <PageContainer>
@@ -79,8 +172,46 @@ export const MainPage = () => {
         <ContentCard>
           <DateHeader>
             <DateLargeText>6월 15일 할 일</DateLargeText>
-            <NewPlanButton>+ 새 일정</NewPlanButton>
+            <NewPlanButton onClick={openForm}>+ 새 일정</NewPlanButton>
           </DateHeader>
+          {isFormOpen && (
+            <FormCard>
+              <Input
+                placeholder="일정 제목"
+                value={form.title}
+                onChange={e => handleChange('title', e.target.value)}
+                autoFocus
+              />
+              <TimeInputRow>
+                <span>⏰</span>
+                <TimeInput
+                  type="number"
+                  min={0}
+                  max={23}
+                  value={String(form.hour).padStart(2, '0')}
+                  onChange={e => handleHourChange(e.target.value)}
+                />
+                <span>:</span>
+                <TimeInput
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={String(form.minute).padStart(2, '0')}
+                  onChange={e => handleMinuteChange(e.target.value)}
+                />
+              </TimeInputRow>
+              <Textarea
+                placeholder="상세 내용"
+                rows={2}
+                value={form.description}
+                onChange={e => handleChange('description', e.target.value)}
+              />
+              <FormButtons>
+                <SaveButton onClick={handleSubmit}>저장</SaveButton>
+                <CancelButton onClick={closeForm}>취소</CancelButton>
+              </FormButtons>
+            </FormCard>
+          )}
           <TodoList
             todos={todos}
             onToggle={toggleTodo}
