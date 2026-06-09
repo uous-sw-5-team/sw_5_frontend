@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
-import Calendar from '../components/Calendar'; 
+import Calendar from '../components/Calendar';
+import TodoList from '../components/TodoList';
 
 const PageContainer = styled.div`
   display: flex;
@@ -13,8 +14,8 @@ const PageContainer = styled.div`
 
 const MainContent = styled.main`
   display: grid;
-  grid-template-columns: 1.78fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
   padding: 32px 40px 40px 40px;
   flex: 1;
   max-width: 1600px;
@@ -26,7 +27,7 @@ const MainContent = styled.main`
 const ContentCard = styled.div`
   background-color: #ffffff;
   border-radius: 40px;
-  padding: 56px 48px;
+  padding: 40px 36px;
   min-height: 640px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
   box-sizing: border-box;
@@ -35,22 +36,15 @@ const ContentCard = styled.div`
 const DateHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 48px;
-`;
-
-const DateTextGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  margin-bottom: 24px;
 `;
 
 const DateLargeText = styled.h2`
-  font-size: 36px;
+  font-size: 26px;
   font-weight: 800;
   color: #1a1a1a;
   margin: 0;
-  line-height: 1.2;
 `;
 
 const NewPlanButton = styled.button`
@@ -58,25 +52,16 @@ const NewPlanButton = styled.button`
   color: #ffffff;
   border: none;
   border-radius: 20px;
-  padding: 12px 16px;
-  font-size: 15px;
+  padding: 10px 14px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   &:hover { background-color: #222222; }
-`;
-
-const GuideText = styled.p`
-  font-size: 16px;
-  color: #b0b0b0;
-  line-height: 1.8;
-  text-align: center;
-  margin: 180px auto 0 auto;
-  max-width: 320px;
-  word-break: keep-all;
 `;
 
 export const MainPage = () => {
@@ -85,19 +70,14 @@ export const MainPage = () => {
       <Header />
       <MainContent>
         <ContentCard>
-          <Calendar /> 
+          <Calendar />
         </ContentCard>
         <ContentCard>
           <DateHeader>
-            <DateTextGroup>
-              <DateLargeText>6월 15일</DateLargeText>
-              <DateLargeText>일요일</DateLargeText>
-            </DateTextGroup>
+            <DateLargeText>6월 15일 할 일</DateLargeText>
             <NewPlanButton>+ 새 일정</NewPlanButton>
           </DateHeader>
-          <GuideText>
-            [이 영역에 들어갈 TodoList 카드들은 components에서 구현하여 조립합니다]
-          </GuideText>
+          <TodoList />
         </ContentCard>
       </MainContent>
     </PageContainer>
