@@ -18,7 +18,7 @@ const PageContainer = styled.div`
 
 const MainContent = styled.main`
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   gap: 16px;
   padding: 16px 28px 20px 28px;
   flex: 1;
@@ -38,10 +38,20 @@ const ContentCard = styled.div`
   overflow: hidden;
 `;
 
+const RightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  height: 100%;
+`;
+
 const RightCard = styled(ContentCard)`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  min-height: 0;
 `;
 
 const TodoScrollArea = styled.div`
@@ -194,60 +204,62 @@ export const MainPage = () => {
         <ContentCard>
           <Calendar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
         </ContentCard>
-        <RightCard>
-          <DateHeader>
-            <DateLargeText>{toKoreanDate(selectedDate)}</DateLargeText>
-            <NewPlanButton onClick={openForm}>+ 새 일정</NewPlanButton>
-          </DateHeader>
-          {isFormOpen && (
-            <FormCard>
-              <Input
-                placeholder="일정 제목"
-                value={form.title}
-                onChange={e => handleChange('title', e.target.value)}
-                autoFocus
-              />
-              <TimeInputRow>
-                <span>⏰</span>
-                <TimeInput
-                  type="number"
-                  min={0}
-                  max={23}
-                  value={String(form.hour).padStart(2, '0')}
-                  onChange={e => handleHourChange(e.target.value)}
+        <RightColumn>
+          <RightCard>
+            <DateHeader>
+              <DateLargeText>{toKoreanDate(selectedDate)}</DateLargeText>
+              <NewPlanButton onClick={openForm}>+ 새 일정</NewPlanButton>
+            </DateHeader>
+            {isFormOpen && (
+              <FormCard>
+                <Input
+                  placeholder="일정 제목"
+                  value={form.title}
+                  onChange={e => handleChange('title', e.target.value)}
+                  autoFocus
                 />
-                <span>:</span>
-                <TimeInput
-                  type="number"
-                  min={0}
-                  max={59}
-                  value={String(form.minute).padStart(2, '0')}
-                  onChange={e => handleMinuteChange(e.target.value)}
+                <TimeInputRow>
+                  <span>⏰</span>
+                  <TimeInput
+                    type="number"
+                    min={0}
+                    max={23}
+                    value={String(form.hour).padStart(2, '0')}
+                    onChange={e => handleHourChange(e.target.value)}
+                  />
+                  <span>:</span>
+                  <TimeInput
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={String(form.minute).padStart(2, '0')}
+                    onChange={e => handleMinuteChange(e.target.value)}
+                  />
+                </TimeInputRow>
+                <Textarea
+                  placeholder="상세 내용"
+                  rows={2}
+                  value={form.description}
+                  onChange={e => handleChange('description', e.target.value)}
                 />
-              </TimeInputRow>
-              <Textarea
-                placeholder="상세 내용"
-                rows={2}
-                value={form.description}
-                onChange={e => handleChange('description', e.target.value)}
+                <FormButtons>
+                  <SaveButton onClick={handleSubmit}>저장</SaveButton>
+                  <CancelButton onClick={closeForm}>취소</CancelButton>
+                </FormButtons>
+              </FormCard>
+            )}
+            <TodoScrollArea>
+              <TodoList
+                todos={filteredTodos}
+                onToggle={toggleTodo}
+                onDelete={deleteTodo}
+                onSave={updateTodo}
+                remaining={remaining}
               />
-              <FormButtons>
-                <SaveButton onClick={handleSubmit}>저장</SaveButton>
-                <CancelButton onClick={closeForm}>취소</CancelButton>
-              </FormButtons>
-            </FormCard>
-          )}
-          <TodoScrollArea>
-            <TodoList
-              todos={filteredTodos}
-              onToggle={toggleTodo}
-              onDelete={deleteTodo}
-              onSave={updateTodo}
-              remaining={remaining}
-            />
-          </TodoScrollArea>
+            </TodoScrollArea>
+          </RightCard>
           <FocusTracker percentage={percentage} />
-        </RightCard>
+        </RightColumn>
       </MainContent>
     </PageContainer>
   );
