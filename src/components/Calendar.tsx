@@ -4,9 +4,10 @@ import styled from 'styled-components';
 interface CalendarProps {
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
+  uploadedImages?: Record<string, string>;
 }
 
-const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
+const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarProps) => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth() + 1);
@@ -27,6 +28,9 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
     selectedDate.getFullYear() === year &&
     selectedDate.getMonth() === month - 1 &&
     selectedDate.getDate() === date;
+
+  const getDateStr = (date: number) =>
+    `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
   const handleClick = (date: number) => {
     onDateSelect(new Date(year, month - 1, date));
@@ -91,18 +95,25 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
         {days.map((day, i) => (
           <DayHeader key={day} isSunday={i === 0}>{day}</DayHeader>
         ))}
-        {cells.map((date, i) => (
-          <Cell
-            key={i}
-            isEmpty={date === null}
-            isSelected={date !== null && isSelected(date)}
-            onClick={() => date !== null && handleClick(date)}
-          >
-            {date !== null && (
-              <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
-            )}
-          </Cell>
-        ))}
+        {cells.map((date, i) => {
+          const dateStr = date !== null ? getDateStr(date) : null;
+          const image = dateStr ? uploadedImages[dateStr] : null;
+          return (
+            <Cell
+              key={i}
+              isEmpty={date === null}
+              isSelected={date !== null && isSelected(date)}
+              onClick={() => date !== null && handleClick(date)}
+            >
+              {date !== null && (
+                <>
+                  <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+                  {image && <CellThumbnail src={image} alt="사진" />}
+                </>
+              )}
+            </Cell>
+          );
+        })}
       </Grid>
     </CalendarContainer>
   );
@@ -265,4 +276,13 @@ const DateNumber = styled.span<{ isSunday: boolean }>`
   font-size: 13px;
   font-weight: 500;
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+`;
+
+const CellThumbnail = styled.img`
+  width: 100%;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-top: 4px;
+  display: block;
 `;
