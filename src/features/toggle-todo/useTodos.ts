@@ -33,8 +33,16 @@ export const useTodos = () => {
     setTodos(prev => prev.filter(todo => todo.id !== id));
   };
 
+  const updateTodo = (id: number, updated: Partial<Todo>) => {
+    setTodos(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, ...updated } : todo
+      )
+    );
+  };
+
   const remaining = todos.filter(t => !t.completed).length;
   const percentage = todos.length === 0 ? 0 : Math.round((todos.filter(t => t.completed).length / todos.length) * 100);
 
-  return { todos, toggleTodo, addTodo, deleteTodo, remaining, percentage };
+  return { todos, toggleTodo, addTodo, deleteTodo, updateTodo, remaining, percentage };
 };
