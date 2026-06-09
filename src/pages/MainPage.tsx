@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Calendar from '../components/Calendar';
 import TodoList from '../components/TodoList';
 import FocusTracker from '../components/FocusTracker';
+import { useTodos } from '../features/toggle-todo/useTodos';
 
 const PageContainer = styled.div`
   display: flex;
@@ -66,6 +67,8 @@ const NewPlanButton = styled.button`
 `;
 
 export const MainPage = () => {
+  const { todos, toggleTodo, remaining, percentage } = useTodos();
+
   return (
     <PageContainer>
       <Header />
@@ -78,8 +81,12 @@ export const MainPage = () => {
             <DateLargeText>6월 15일 할 일</DateLargeText>
             <NewPlanButton>+ 새 일정</NewPlanButton>
           </DateHeader>
-          <TodoList />
-          <FocusTracker percentage={0} />
+          <TodoList
+            todos={todos}
+            onToggle={toggleTodo}
+            remaining={remaining}
+          />
+          <FocusTracker percentage={percentage} />
         </ContentCard>
       </MainContent>
     </PageContainer>
