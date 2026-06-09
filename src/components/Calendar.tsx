@@ -10,10 +10,10 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth() + 1);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const firstDay = new Date(year, month - 1, 1).getDay();
   const lastDate = new Date(year, month, 0).getDate();
-
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
   const cells = [
@@ -31,32 +31,67 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
   };
 
   const handlePrev = () => {
-    if (month === 1) {
-      setYear(y => y - 1);
-      setMonth(12);
-    } else {
-      setMonth(m => m - 1);
-    }
+    if (month === 1) { setYear(y => y - 1); setMonth(12); }
+    else { setMonth(m => m - 1); }
   };
 
   const handleNext = () => {
-    if (month === 12) {
-      setYear(y => y + 1);
-      setMonth(1);
-    } else {
-      setMonth(m => m + 1);
-    }
+    if (month === 12) { setYear(y => y + 1); setMonth(1); }
+    else { setMonth(m => m + 1); }
   };
+
+  const handleYearSelect = (y: number) => setYear(y);
+  const handleMonthSelect = (m: number) => {
+    setMonth(m);
+    setShowDropdown(false);
+  };
+
+  const yearList = Array.from({ length: 10 }, (_, i) => today.getFullYear() - 3 + i);
 
   return (
     <CalendarContainer>
       <CalendarHeader>
-        <Title>{year}년 {month}월 ▾</Title>
+        <Title onClick={() => setShowDropdown(d => !d)}>
+          {year}년 {month}월 ▾
+        </Title>
         <NavButtons>
           <button onClick={handlePrev}>{'<'}</button>
           <button onClick={handleNext}>{'>'}</button>
         </NavButtons>
       </CalendarHeader>
+
+      {showDropdown && (
+        <Dropdown>
+          <DropdownSection>
+            <DropdownLabel>📅 연도 선택</DropdownLabel>
+            <YearList>
+              {yearList.map(y => (
+                <YearItem
+                  key={y}
+                  isSelected={y === year}
+                  onClick={() => handleYearSelect(y)}
+                >
+                  {y}년
+                </YearItem>
+              ))}
+            </YearList>
+          </DropdownSection>
+          <DropdownSection>
+            <DropdownLabel>📅 월 선택</DropdownLabel>
+            <MonthGrid>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                <MonthItem
+                  key={m}
+                  isSelected={m === month}
+                  onClick={() => handleMonthSelect(m)}
+                >
+                  {m}월
+                </MonthItem>
+              ))}
+            </MonthGrid>
+          </DropdownSection>
+        </Dropdown>
+      )}
 
       <Grid>
         {days.map((day, i) => (
@@ -70,9 +105,7 @@ const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
             onClick={() => date !== null && handleClick(date)}
           >
             {date !== null && (
-              <DateNumber isSunday={i % 7 === 0}>
-                {date}
-              </DateNumber>
+              <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
             )}
           </Cell>
         ))}
@@ -88,7 +121,8 @@ const CalendarContainer = styled.div`
   background: white;
   border: 1px solid #edebeb;
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 `;
 
 const CalendarHeader = styled.div`
@@ -104,12 +138,14 @@ const Title = styled.h2`
   font-weight: 800;
   color: #031635;
   margin: 0;
+  cursor: pointer;
+  user-select: none;
+  &:hover { opacity: 0.7; }
 `;
 
 const NavButtons = styled.div`
   display: flex;
   gap: 10px;
-
   button {
     width: 40px;
     height: 40px;
@@ -124,6 +160,78 @@ const NavButtons = styled.div`
     justify-content: center;
     &:hover { background: #f9f9f9; }
   }
+`;
+
+const Dropdown = styled.div`
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 24px;
+  border: 2px solid #d0ccc8;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const DropdownSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const DropdownLabel = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const YearList = styled.div`
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+`;
+
+const YearItem = styled.div<{ isSelected: boolean }>`
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: ${({ isSelected }) => (isSelected ? '800' : '500')};
+  background: ${({ isSelected }) => (isSelected ? '#031635' : 'white')};
+  color: ${({ isSelected }) => (isSelected ? 'white' : '#031635')};
+  border: 1px solid #d0ccc8;
+  cursor: pointer;
+  &:hover { background: ${({ isSelected }) => (isSelected ? '#031635' : '#f0f0f0')}; }
+`;
+
+const MonthGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+`;
+
+const MonthItem = styled.div<{ isSelected: boolean }>`
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: ${({ isSelected }) => (isSelected ? '800' : '500')};
+  background: ${({ isSelected }) => (isSelected ? '#031635' : 'white')};
+  color: ${({ isSelected }) => (isSelected ? 'white' : '#031635')};
+  border: 1px solid #d0ccc8;
+  cursor: pointer;
+  &:hover { background: ${({ isSelected }) => (isSelected ? '#031635' : '#f0f0f0')}; }
 `;
 
 const Grid = styled.div`
