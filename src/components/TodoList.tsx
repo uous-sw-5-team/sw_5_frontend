@@ -12,9 +12,14 @@ interface TodoListProps {
 }
 
 const TodoList = ({ todos, onToggle, onDelete, onSave, remaining }: TodoListProps) => {
+  const completed = todos.filter(t => t.completed).length;
+
   return (
     <ListWrapper>
-      <Badge>{remaining}개 남음</Badge>
+      <BadgeRow>
+        <Badge type="completed">{completed}개 완료</Badge>
+        <Badge type="remaining">{remaining}개 남음</Badge>
+      </BadgeRow>
       {todos.map(todo => (
         <TodoCard
           key={todo.id}
@@ -35,14 +40,18 @@ const ListWrapper = styled.div`
   flex-direction: column;
 `;
 
-const Badge = styled.span`
+const BadgeRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+`;
+
+const Badge = styled.span<{ type: 'completed' | 'remaining' }>`
   display: inline-block;
-  background-color: #f5f0e8;
-  color: #8a7560;
+  background-color: ${({ type }) => type === 'completed' ? '#e8f5e9' : '#f5f0e8'};
+  color: ${({ type }) => type === 'completed' ? '#4caf50' : '#8a7560'};
   font-size: 13px;
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 20px;
-  margin-bottom: 16px;
-  align-self: flex-start;
 `;
