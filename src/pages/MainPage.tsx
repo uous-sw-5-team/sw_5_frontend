@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
@@ -229,6 +229,17 @@ const UploadButton = styled.button`
   &:hover { background: #0a2a5e; }
 `;
 
+const HiddenFileInput = styled.input`
+  display: none;
+`;
+
+const PreviewImage = styled.img`
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 120px;
+`;
+
 const toDateStr = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
@@ -237,6 +248,9 @@ const toKoreanDate = (date: Date) =>
 
 export const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos();
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
     useCreateTodo(addTodo, selectedDate);
@@ -248,6 +262,15 @@ export const MainPage = () => {
     ? Math.round((filteredTodos.filter(t => t.completed).length / filteredTodos.length) * 100)
     : 0;
   const allCompleted = filteredTodos.length > 0 && filteredTodos.every(t => t.completed);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setUploadedImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <PageContainer>
@@ -314,7 +337,16 @@ export const MainPage = () => {
                 <CompleteIcon>✅</CompleteIcon>
                 <CompleteTitle>모든 할 일을 완료했습니다!</CompleteTitle>
                 <CompleteSubtitle>학습 노트 사진을 업로드하고 인증하세요.</CompleteSubtitle>
-                <UploadButton>⬆ 사진 업로드</UploadButton>
+                {uploadedImage && <PreviewImage src={uploadedImage} alt="업로드 사진" />}
+                <HiddenFileInput
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+                <UploadButton onClick={() => fileInputRef.current?.click()}>
+                  ⬆ 사진 업로드
+                </UploadButton>
               </CompleteCard>
             )}
           </RightCard>
