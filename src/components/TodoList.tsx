@@ -7,22 +7,21 @@ interface TodoListProps {
   todos: Todo[];
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
+  onSave: (id: number, updated: Partial<Todo>) => void;
   remaining: number;
 }
 
-const TodoList = ({ todos, onToggle, onDelete, remaining }: TodoListProps) => {
+const TodoList = ({ todos, onToggle, onDelete, onSave, remaining }: TodoListProps) => {
   return (
     <ListWrapper>
       <Badge>{remaining}개 남음</Badge>
       {todos.map(todo => (
         <TodoCard
           key={todo.id}
-          title={todo.title}
-          time={todo.time}
-          description={todo.description}
-          completed={todo.completed}
+          todo={todo}
           onToggle={() => onToggle(todo.id)}
           onDelete={() => onDelete(todo.id)}
+          onSave={onSave}
         />
       ))}
     </ListWrapper>
