@@ -181,6 +181,54 @@ const CancelButton = styled.button`
   color: #888888;
 `;
 
+const CompleteCard = styled.div`
+  border: 2px dashed #f4a0a0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  background: #fff8f8;
+  flex-shrink: 0;
+`;
+
+const CompleteIcon = styled.div`
+  font-size: 22px;
+  background: #ffe0e0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CompleteTitle = styled.div`
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a1a1a;
+`;
+
+const CompleteSubtitle = styled.div`
+  font-size: 12px;
+  color: #aaaaaa;
+`;
+
+const UploadButton = styled.button`
+  width: 100%;
+  background: #031635;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  &:hover { background: #0a2a5e; }
+`;
+
 const toDateStr = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
@@ -199,6 +247,7 @@ export const MainPage = () => {
   const filteredPercentage = filteredTodos.length > 0
     ? Math.round((filteredTodos.filter(t => t.completed).length / filteredTodos.length) * 100)
     : 0;
+  const allCompleted = filteredTodos.length > 0 && filteredTodos.every(t => t.completed);
 
   return (
     <PageContainer>
@@ -260,6 +309,14 @@ export const MainPage = () => {
                 remaining={remaining}
               />
             </TodoScrollArea>
+            {allCompleted && (
+              <CompleteCard>
+                <CompleteIcon>✅</CompleteIcon>
+                <CompleteTitle>모든 할 일을 완료했습니다!</CompleteTitle>
+                <CompleteSubtitle>학습 노트 사진을 업로드하고 인증하세요.</CompleteSubtitle>
+                <UploadButton>⬆ 사진 업로드</UploadButton>
+              </CompleteCard>
+            )}
           </RightCard>
           <FocusTracker percentage={filteredPercentage} />
         </RightColumn>
