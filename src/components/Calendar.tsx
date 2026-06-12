@@ -23,6 +23,7 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
   const totalCells = Math.ceil((firstDay + lastDate) / 7) * 7;
+  const weekCount = totalCells / 7;
   const cells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: lastDate }, (_, i) => i + 1),
@@ -96,7 +97,7 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
         </Dropdown>
       )}
 
-      <Grid>
+      <Grid $weekCount={weekCount}>
         {days.map((day, i) => (
           <DayHeader key={day} isSunday={i === 0}>{day}</DayHeader>
         ))}
@@ -113,10 +114,8 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
             >
               {date !== null && (
                 <>
-                  <CellTopRow>
-                    <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
-                    {examLabel && <ExamBadge>{examLabel}</ExamBadge>}
-                  </CellTopRow>
+                  <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+                  {examLabel && <ExamBadge>{examLabel}</ExamBadge>}
                   {image && (
                     <ThumbnailWrapper>
                       <CellThumbnail src={image} alt="사진" />
@@ -137,11 +136,15 @@ export default Calendar;
 
 const CalendarContainer = styled.div`
   width: 100%;
+  height: 100%;
+  min-height: 0;
   background: white;
   border: 1px solid #edebeb;
   border-radius: 20px;
   overflow: visible;
   position: relative;
+  display: flex;
+  flex-direction: column;
 `;
 
 const CalendarHeader = styled.div`
@@ -253,16 +256,22 @@ const MonthItem = styled.div<{ isSelected: boolean }>`
   &:hover { background: ${({ isSelected }) => (isSelected ? '#031635' : '#f0f0f0')}; }
 `;
 
-const Grid = styled.div`
+const Grid = styled.div<{ $weekCount: number }>`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: ${({ $weekCount }) => `40px repeat(${$weekCount}, minmax(88px, 1fr))`};
+  flex: 1;
+  min-height: ${({ $weekCount }) => 40 + $weekCount * 88}px;
   border-left: 1px solid #edebeb;
 `;
 
 const DayHeader = styled.div<{ isSunday: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
-  padding: 8px 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   font-weight: 600;
   font-size: 13px;
@@ -273,7 +282,8 @@ const DayHeader = styled.div<{ isSunday: boolean }>`
 const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
-  min-height: 88px;
+  min-width: 0;
+  min-height: 0;
   padding: 8px;
   background: ${({ isEmpty, isSelected }) =>
     isSelected ? '#fff3f3' : isEmpty ? '#f5f0e8' : 'white'};
@@ -281,25 +291,25 @@ const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
   outline-offset: -2px;
   box-sizing: border-box;
   cursor: ${({ isEmpty }) => (isEmpty ? 'default' : 'pointer')};
+  display: flex;
+  flex-direction: column;
   &:hover {
     background: ${({ isEmpty }) => (isEmpty ? '#f5f0e8' : '#fff8f8')};
   }
-`;
-
-const CellTopRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 `;
 
 const DateNumber = styled.span<{ isSunday: boolean }>`
   font-size: 13px;
   font-weight: 500;
   color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+  line-height: 1.2;
 `;
 
 const ExamBadge = styled.div`
   display: inline-block;
+  width: fit-content;
+  margin-top: 6px;
+  align-self: center;
   background: #fef9c3;
   color: #854d0e;
   font-size: 10px;
