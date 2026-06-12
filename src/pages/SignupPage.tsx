@@ -1,12 +1,14 @@
 import AuthForm from "../components/auth/AuthForm";
 import AuthLayout from "../components/auth/AuthLayout";
+import AuthSwitchLink from "../components/auth/AuthSwitchLink";
 import TextField from "../components/auth/TextField";
 
 interface SignupPageProps {
+  onMoveToLogin: () => void;
   onSignupSuccess: () => void;
 }
 
-const SignupPage = ({ onSignupSuccess }: SignupPageProps) => {
+const SignupPage = ({ onMoveToLogin, onSignupSuccess }: SignupPageProps) => {
   return (
     <AuthLayout
       title="회원가입"
@@ -47,6 +49,11 @@ const SignupPage = ({ onSignupSuccess }: SignupPageProps) => {
           autoComplete="new-password"
         />
       </AuthForm>
+      <AuthSwitchLink
+        label="이미 계정이 있나요?"
+        actionLabel="로그인"
+        onClick={onMoveToLogin}
+      />
     </AuthLayout>
   );
 };

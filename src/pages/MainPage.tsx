@@ -7,6 +7,11 @@ import FocusTracker from '../components/FocusTracker';
 import { useTodos } from '../features/toggle-todo/useTodos';
 import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 
+interface MainPageProps {
+  onMoveToLogin?: () => void;
+  onMoveToSignup?: () => void;
+}
+
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -270,7 +275,7 @@ const toDateStr = (date: Date) =>
 const toKoreanDate = (date: Date) =>
   `${date.getMonth() + 1}월 ${date.getDate()}일 할 일`;
 
-export const MainPage = () => {
+export const MainPage = ({ onMoveToLogin, onMoveToSignup }: MainPageProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -308,7 +313,7 @@ export const MainPage = () => {
 
   return (
     <PageContainer>
-      <Header />
+      <Header onMoveToLogin={onMoveToLogin} onMoveToSignup={onMoveToSignup} />
       <MainContent>
         <ContentCard>
           <Calendar
