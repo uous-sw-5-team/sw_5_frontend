@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Header = () => {
+interface HeaderProps {
+  onMoveToLogin?: () => void;
+  onMoveToSignup?: () => void;
+}
+
+const Header = ({ onMoveToLogin, onMoveToSignup }: HeaderProps) => {
   return (
     <HeaderContainer>
       <HeaderContent>
@@ -16,8 +21,12 @@ const Header = () => {
 
         {/* 우측 버튼 영역 */}
         <ButtonGroup>
-          <LoginButton>로그인</LoginButton>
-          <SignUpButton>회원가입</SignUpButton>
+          <LoginButton type="button" onClick={onMoveToLogin}>
+            로그인
+          </LoginButton>
+          <SignUpButton type="button" onClick={onMoveToSignup}>
+            회원가입
+          </SignUpButton>
         </ButtonGroup>
       </HeaderContent>
     </HeaderContainer>

@@ -1,12 +1,14 @@
 import AuthForm from "../components/auth/AuthForm";
 import AuthLayout from "../components/auth/AuthLayout";
+import AuthSwitchLink from "../components/auth/AuthSwitchLink";
 import TextField from "../components/auth/TextField";
 
 interface LoginPageProps {
+  onMoveToSignup: () => void;
   onLoginSuccess: () => void;
 }
 
-const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
+const LoginPage = ({ onMoveToSignup, onLoginSuccess }: LoginPageProps) => {
   return (
     <AuthLayout
       title="로그인"
@@ -34,6 +36,11 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
           autoComplete="current-password"
         />
       </AuthForm>
+      <AuthSwitchLink
+        label="아직 계정이 없나요?"
+        actionLabel="회원가입"
+        onClick={onMoveToSignup}
+      />
     </AuthLayout>
   );
 };
