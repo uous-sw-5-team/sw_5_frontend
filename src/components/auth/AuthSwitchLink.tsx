@@ -8,33 +8,41 @@ interface AuthSwitchLinkProps {
 
 const AuthSwitchLink = ({ label, actionLabel, onClick }: AuthSwitchLinkProps) => {
   return (
-    <SwitchText>
-      {label}
-      <SwitchButton type="button" onClick={onClick}>
-        {actionLabel}
-      </SwitchButton>
-    </SwitchText>
+    <SwitchSection>
+      <SwitchText>
+        {label}
+        <SwitchButton type="button" onClick={onClick}>
+          {actionLabel}
+        </SwitchButton>
+      </SwitchText>
+    </SwitchSection>
   );
 };
 
 export default AuthSwitchLink;
 
-const SwitchText = styled.p`
-  color: #667085;
-  font-size: 14px;
-  line-height: 1.5;
+const SwitchSection = styled.div`
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(197, 198, 207, 0.7);
   text-align: center;
-  margin: 24px 0 0;
+`;
+
+const SwitchText = styled.p`
+  color: #44474e;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
 `;
 
 const SwitchButton = styled.button`
   border: 0;
   background: transparent;
-  color: #0b7f56;
+  color: #006a6a;
   font: inherit;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
-  padding: 0 0 0 6px;
+  padding: 0 0 0 8px;
 
   &:hover {
     text-decoration: underline;
