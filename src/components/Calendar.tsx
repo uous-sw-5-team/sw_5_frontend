@@ -98,7 +98,7 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
 
       <Grid>
         {days.map((day, i) => (
-          <DayHeader key={day} isSunday={i === 0}>{day}</DayHeader>
+          <DayHeader key={day} $isSunday={i === 0}>{day}</DayHeader>
         ))}
         {cells.map((date, i) => {
           const dateStr = date !== null ? getDateStr(date) : null;
@@ -107,14 +107,14 @@ const Calendar = ({ selectedDate, onDateSelect, uploadedImages = {} }: CalendarP
           return (
             <Cell
               key={i}
-              isEmpty={date === null}
-              isSelected={date !== null && isSelected(date)}
+              $isEmpty={date === null}
+              $isSelected={date !== null && isSelected(date)}
               onClick={() => date !== null && handleClick(date)}
             >
               {date !== null && (
                 <>
                   <CellTopRow>
-                    <DateNumber isSunday={i % 7 === 0}>{date}</DateNumber>
+                    <DateNumber $isSunday={i % 7 === 0}>{date}</DateNumber>
                     {examLabel && <ExamBadge>{examLabel}</ExamBadge>}
                   </CellTopRow>
                   {image && (
@@ -259,30 +259,30 @@ const Grid = styled.div`
   border-left: 1px solid #edebeb;
 `;
 
-const DayHeader = styled.div<{ isSunday: boolean }>`
+const DayHeader = styled.div<{ $isSunday: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
   padding: 8px 0;
   text-align: center;
   font-weight: 600;
   font-size: 13px;
-  color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+  color: ${({ $isSunday }) => ($isSunday ? '#e05c5c' : '#031635')};
   background: #fafafa;
 `;
 
-const Cell = styled.div<{ isEmpty: boolean; isSelected: boolean }>`
+const Cell = styled.div<{ $isEmpty: boolean; $isSelected: boolean }>`
   border-right: 1px solid #edebeb;
   border-bottom: 1px solid #edebeb;
   min-height: 88px;
   padding: 8px;
-  background: ${({ isEmpty, isSelected }) =>
-    isSelected ? '#fff3f3' : isEmpty ? '#f5f0e8' : 'white'};
-  outline: ${({ isSelected }) => (isSelected ? '2px solid #e05c5c' : 'none')};
+  background: ${({ $isEmpty, $isSelected }) =>
+    $isSelected ? '#fff3f3' : $isEmpty ? '#f5f0e8' : 'white'};
+  outline: ${({ $isSelected }) => ($isSelected ? '2px solid #e05c5c' : 'none')};
   outline-offset: -2px;
   box-sizing: border-box;
-  cursor: ${({ isEmpty }) => (isEmpty ? 'default' : 'pointer')};
+  cursor: ${({ $isEmpty }) => ($isEmpty ? 'default' : 'pointer')};
   &:hover {
-    background: ${({ isEmpty }) => (isEmpty ? '#f5f0e8' : '#fff8f8')};
+    background: ${({ $isEmpty }) => ($isEmpty ? '#f5f0e8' : '#fff8f8')};
   }
 `;
 
@@ -292,10 +292,10 @@ const CellTopRow = styled.div`
   justify-content: space-between;
 `;
 
-const DateNumber = styled.span<{ isSunday: boolean }>`
+const DateNumber = styled.span<{ $isSunday: boolean }>`
   font-size: 13px;
   font-weight: 500;
-  color: ${({ isSunday }) => (isSunday ? '#e05c5c' : '#031635')};
+  color: ${({ $isSunday }) => ($isSunday ? '#e05c5c' : '#031635')};
 `;
 
 const ExamBadge = styled.div`
