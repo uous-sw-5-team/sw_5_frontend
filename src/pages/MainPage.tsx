@@ -8,6 +8,7 @@ import { useTodos } from '../features/toggle-todo/useTodos';
 import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 
 interface MainPageProps {
+  isAuthenticated?: boolean;
   onMoveToLogin?: () => void;
   onMoveToSignup?: () => void;
 }
@@ -275,7 +276,7 @@ const toDateStr = (date: Date) =>
 const toKoreanDate = (date: Date) =>
   `${date.getMonth() + 1}월 ${date.getDate()}일 할 일`;
 
-export const MainPage = ({ onMoveToLogin, onMoveToSignup }: MainPageProps) => {
+export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup }: MainPageProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -313,7 +314,11 @@ export const MainPage = ({ onMoveToLogin, onMoveToSignup }: MainPageProps) => {
 
   return (
     <PageContainer>
-      <Header onMoveToLogin={onMoveToLogin} onMoveToSignup={onMoveToSignup} />
+      <Header
+        isAuthenticated={isAuthenticated}
+        onMoveToLogin={onMoveToLogin}
+        onMoveToSignup={onMoveToSignup}
+      />
       <MainContent>
         <ContentCard>
           <Calendar

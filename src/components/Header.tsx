@@ -1,41 +1,43 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 interface HeaderProps {
+  isAuthenticated?: boolean;
   onMoveToLogin?: () => void;
   onMoveToSignup?: () => void;
 }
 
-const Header = ({ onMoveToLogin, onMoveToSignup }: HeaderProps) => {
+const Header = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup }: HeaderProps) => {
   return (
     <HeaderContainer>
       <HeaderContent>
-        {/* 좌측 로고 영역 */}
         <LogoGroup>
-          <LogoIcon src="/src/app/assets/logo.png" alt="App Name" onError={(e) => {
-            // 혹시 로고 이미지가 없을 경우를 대비한 대체 텍스트 처리
-            e.currentTarget.style.display = 'none';
-          }} />
+          <LogoIcon
+            src="/src/app/assets/logo.png"
+            alt="Study Planner"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
           <LogoText>Study Planner</LogoText>
         </LogoGroup>
 
-        {/* 우측 버튼 영역 */}
-        <ButtonGroup>
-          <LoginButton type="button" onClick={onMoveToLogin}>
-            로그인
-          </LoginButton>
-          <SignUpButton type="button" onClick={onMoveToSignup}>
-            회원가입
-          </SignUpButton>
-        </ButtonGroup>
+        {!isAuthenticated && (
+          <ButtonGroup>
+            <LoginButton type="button" onClick={onMoveToLogin}>
+              로그인
+            </LoginButton>
+            <SignUpButton type="button" onClick={onMoveToSignup}>
+              회원가입
+            </SignUpButton>
+          </ButtonGroup>
+        )}
       </HeaderContent>
     </HeaderContainer>
   );
 };
 
 export default Header;
-
-// ====== Styled Components (시안 싱크로율 100%) ======
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -50,8 +52,8 @@ const HeaderContainer = styled.header`
 
 const HeaderContent = styled.div`
   width: 100%;
-  max-width: 1600px; /* 메인 콘텐츠 카드 너비와 통일 */
-  padding: 0 40px;   /* 메인 콘텐츠 패딩과 정렬 일치 */
+  max-width: 1600px;
+  padding: 0 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -73,10 +75,10 @@ const LogoIcon = styled.img`
 
 const LogoText = styled.h1`
   font-size: 26px;
-  font-weight: 800; /* 시안 특유의 두껍고 깔끔한 서체 반영 */
-  color: #0f172a;   /* 짙은 네이비/블랙 계열 */
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 `;
 
 const ButtonGroup = styled.div`
@@ -89,7 +91,7 @@ const LoginButton = styled.button`
   background-color: #f1f5f9;
   color: #1e293b;
   border: none;
-  border-radius: 12px; /* 부드러운 라운딩 처리 */
+  border-radius: 12px;
   padding: 10px 20px;
   font-size: 15px;
   font-weight: 700;
@@ -102,7 +104,7 @@ const LoginButton = styled.button`
 `;
 
 const SignUpButton = styled.button`
-  background-color: #0f172a; /* 시안의 짙은 네이비/블랙 버튼 색상 */
+  background-color: #0f172a;
   color: #ffffff;
   border: none;
   border-radius: 12px;
