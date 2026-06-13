@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Todo } from '../toggle-todo/useTodos';
+import { createPlan } from './createApi';
 
 export interface NewTodoForm {
   title: string;
@@ -15,7 +15,7 @@ const initialForm: NewTodoForm = {
   description: '',
 };
 
-export const useCreateTodo = (onAdd: (todo: Todo) => void, selectedDate: Date) => {
+export const useCreateTodo = (onAdd: () => void, selectedDate: Date) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [form, setForm] = useState<NewTodoForm>(initialForm);
 
@@ -45,23 +45,25 @@ export const useCreateTodo = (onAdd: (todo: Todo) => void, selectedDate: Date) =
     setForm(prev => ({ ...prev, minute: Math.min(59, Math.max(0, num)) }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.title.trim()) return;
     const ampm = form.hour >= 12 ? '오후' : '오전';
     const displayHour = form.hour % 12 === 0 ? 12 : form.hour % 12;
     const timeStr = `${ampm} ${String(displayHour).padStart(2, '0')}:${String(form.minute).padStart(2, '0')}`;
     const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
-    const newTodo: Todo = {
-      id: String(Date.now()),
-      title: form.title.trim(),
-      time: timeStr,
-      description: form.description.trim(),
-      completed: false,
-      date: dateStr,
-    };
-    onAdd(newTodo);
-    closeForm();
+    try {
+      await createPlan({
+        date: dateStr,
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        time: timeStr,
+      });
+      onAdd();
+      closeForm();
+    } catch (e) {
+      console.error('플랜 생성 실패', e);
+    }
   };
 
   return { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit };
