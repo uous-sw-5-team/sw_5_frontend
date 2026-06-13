@@ -4,7 +4,7 @@ export const useDeleteTodo = (
   todos: Todo[],
   setTodos: (todos: Todo[]) => void
 ) => {
-  const deleteTodo = (id: number) => {
+  const deleteTodo = (id: string) => {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 

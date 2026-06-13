@@ -10,6 +10,12 @@ export const App: React.FC = () => {
   const [view, setView] = useState<AppView>("main");
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getSavedToken()));
 
+  const handleLogout = () => {
+    clearAuthSession();
+    setIsAuthenticated(false);
+    setView("main");
+  };
+
   useEffect(() => {
     const token = getSavedToken();
 
@@ -44,6 +50,7 @@ export const App: React.FC = () => {
         isAuthenticated={isAuthenticated}
         onMoveToLogin={() => setView("login")}
         onMoveToSignup={() => setView("signup")}
+        onLogout={handleLogout}
       />
     );
   }

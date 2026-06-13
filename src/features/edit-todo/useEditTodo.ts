@@ -5,9 +5,9 @@ export const useEditTodo = (
   todos: Todo[],
   setTodos: (todos: Todo[]) => void
 ) => {
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const startEdit = (id: number) => {
+  const startEdit = (id: string) => {
     setEditingId(id);
   };
 
@@ -15,7 +15,7 @@ export const useEditTodo = (
     setEditingId(null);
   };
 
-  const saveEdit = (id: number, updated: Partial<Todo>) => {
+  const saveEdit = (id: string, updated: Partial<Todo>) => {
     setTodos(
       todos.map(todo =>
         todo.id === id ? { ...todo, ...updated } : todo

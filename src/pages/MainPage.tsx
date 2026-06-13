@@ -11,6 +11,7 @@ interface MainPageProps {
   isAuthenticated?: boolean;
   onMoveToLogin?: () => void;
   onMoveToSignup?: () => void;
+  onLogout?: () => void;
 }
 
 const PageContainer = styled.div`
@@ -276,7 +277,7 @@ const toDateStr = (date: Date) =>
 const toKoreanDate = (date: Date) =>
   `${date.getMonth() + 1}월 ${date.getDate()}일 할 일`;
 
-export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup }: MainPageProps) => {
+export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup, onLogout }: MainPageProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -322,6 +323,7 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
         isAuthenticated={isAuthenticated}
         onMoveToLogin={onMoveToLogin}
         onMoveToSignup={onMoveToSignup}
+        onLogout={onLogout}
       />
       <MainContent>
         <ContentCard>
