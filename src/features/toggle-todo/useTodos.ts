@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api, PlanResponse } from '../../api';
+import { planApi as api, PlanResponse } from '../plans/api';
 
 export interface Todo {
   id: string;

@@ -1,7 +1,7 @@
-const BASE = "http://localhost:8080/api";
+const BASE = "/api";
 
 function getToken(): string | null {
-  return localStorage.getItem("token");
+  return localStorage.getItem("studyPlanner.authToken");
 }
 
 async function request<T>(
@@ -55,7 +55,7 @@ export interface PlanResponse {
   updated_at: string;
 }
 
-export const api = {
+export const planApi = {
   listPlans: (params: { date?: string; month?: string } = {}) => {
     const qs = new URLSearchParams(
       Object.fromEntries(
