@@ -5,9 +5,10 @@ interface HeaderProps {
   isAuthenticated?: boolean;
   onMoveToLogin?: () => void;
   onMoveToSignup?: () => void;
+  onLogout?: () => void;
 }
 
-const Header = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup }: HeaderProps) => {
+const Header = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup, onLogout }: HeaderProps) => {
   return (
     <HeaderContainer>
       <HeaderContent>
@@ -22,7 +23,13 @@ const Header = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup }: Head
           <LogoText>Study Planner</LogoText>
         </LogoGroup>
 
-        {!isAuthenticated && (
+        {isAuthenticated ? (
+          <ButtonGroup>
+            <LogoutButton type="button" onClick={onLogout}>
+              로그아웃
+            </LogoutButton>
+          </ButtonGroup>
+        ) : (
           <ButtonGroup>
             <LoginButton type="button" onClick={onMoveToLogin}>
               로그인
@@ -116,5 +123,13 @@ const SignUpButton = styled.button`
 
   &:hover {
     background-color: #1e293b;
+  }
+`;
+
+const LogoutButton = styled(LoginButton)`
+  color: #dc2626;
+
+  &:hover {
+    background-color: #fee2e2;
   }
 `;
