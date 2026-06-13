@@ -15,7 +15,7 @@ const initialForm: NewTodoForm = {
   description: '',
 };
 
-export const useCreateTodo = (onAdd: (todo: Todo) => void, selectedDate: Date) => {
+export const useCreateTodo = (onAdd: (todo: Omit<Todo, 'id'>) => Promise<void>, selectedDate: Date) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [form, setForm] = useState<NewTodoForm>(initialForm);
 
@@ -45,22 +45,20 @@ export const useCreateTodo = (onAdd: (todo: Todo) => void, selectedDate: Date) =
     setForm(prev => ({ ...prev, minute: Math.min(59, Math.max(0, num)) }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.title.trim()) return;
     const ampm = form.hour >= 12 ? '오후' : '오전';
     const displayHour = form.hour % 12 === 0 ? 12 : form.hour % 12;
     const timeStr = `${ampm} ${String(displayHour).padStart(2, '0')}:${String(form.minute).padStart(2, '0')}`;
     const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
-    const newTodo: Todo = {
-      id: Date.now(),
+    await onAdd({
       title: form.title.trim(),
       time: timeStr,
       description: form.description.trim(),
       completed: false,
       date: dateStr,
-    };
-    onAdd(newTodo);
+    });
     closeForm();
   };
 

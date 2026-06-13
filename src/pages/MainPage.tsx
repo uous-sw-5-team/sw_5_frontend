@@ -281,17 +281,16 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos();
+  const dateStr = toDateStr(selectedDate);
+  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos(dateStr);
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
     useCreateTodo(addTodo, selectedDate);
 
-  const dateStr = toDateStr(selectedDate);
-  const filteredTodos = todos.filter(t => t.date === dateStr);
-  const remaining = filteredTodos.filter(t => !t.completed).length;
-  const filteredPercentage = filteredTodos.length > 0
-    ? Math.round((filteredTodos.filter(t => t.completed).length / filteredTodos.length) * 100)
+  const remaining = todos.filter(t => !t.completed).length;
+  const filteredPercentage = todos.length > 0
+    ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100)
     : 0;
-  const allCompleted = filteredTodos.length > 0 && filteredTodos.every(t => t.completed);
+  const allCompleted = todos.length > 0 && todos.every(t => t.completed);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -373,7 +372,7 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
             )}
             <TodoScrollArea>
               <TodoList
-                todos={filteredTodos}
+                todos={todos}
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
                 onSave={updateTodo}

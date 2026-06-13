@@ -5,9 +5,9 @@ import { Todo } from '../features/toggle-todo/useTodos';
 
 interface TodoListProps {
   todos: Todo[];
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
-  onSave: (id: number, updated: Partial<Todo>) => void;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+  onSave: (id: string, updated: Partial<Todo>) => void;
   remaining: number;
 }
 

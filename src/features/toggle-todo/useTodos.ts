@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { api, PlanResponse } from '../../api';
 
 export interface Todo {
-  id: number;
+  id: string;
   title: string;
   time: string;
   description: string;
@@ -9,16 +10,17 @@ export interface Todo {
   date: string;
 }
 
-const today = new Date();
-const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-const initialTodos: Todo[] = [
-  { id: 1, title: '역사 에세이 초안 작성', time: '오전 09:00', description: '산업혁명의 영향에 관한 보고서의 초기 개요를 작성하세요.', completed: false, date: todayStr },
-  { id: 2, title: '유기화학 복습', time: '오후 03:00', description: '다가오는 퀴즈를 위해 탄소-탄소 결합 형성과 반응 메커니즘에 집중하세요.', completed: false, date: todayStr },
-  { id: 3, title: '수학 퀴즈 연습', time: '오후 09:00', description: '모의고사 세트 B를 완료하세요. 계산기 사용 금지.', completed: false, date: todayStr },
-];
+const planToTodo = (plan: PlanResponse): Todo => ({
+  id: plan.id,
+  title: plan.title,
+  time: plan.time ?? '',
+  description: plan.description ?? '',
+  completed: plan.completed,
+  date: plan.date,
+});
 
 const timeToMinutes = (time: string): number => {
+  if (!time) return 0;
   const [period, hhmm] = time.split(' ');
   const [h, m] = hhmm.split(':').map(Number);
   const hour = period === '오전'
@@ -30,27 +32,69 @@ const timeToMinutes = (time: string): number => {
 const sortByTime = (todos: Todo[]) =>
   [...todos].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 
-export const useTodos = () => {
-  const [todos, setTodos] = useState<Todo[]>(sortByTime(initialTodos));
+export const useTodos = (dateStr: string) => {
+  const [todos, setTodos] = useState<Todo[]>([]);
 
-  const toggleTodo = (id: number) => {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  const loadTodos = useCallback(async () => {
+    try {
+      const plans = await api.listPlans({ date: dateStr });
+      setTodos(sortByTime(plans.map(planToTodo)));
+    } catch (e) {
+      console.error('플랜 목록 조회 실패', e);
+    }
+  }, [dateStr]);
+
+  useEffect(() => {
+    loadTodos();
+  }, [loadTodos]);
+
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    try {
+      const updated = await api.updatePlan(id, { completed: !todo.completed });
+      setTodos(prev => prev.map(t => t.id === id ? planToTodo(updated) : t));
+    } catch (e) {
+      console.error('완료 토글 실패', e);
+    }
   };
 
-  const addTodo = (todo: Todo) => {
-    setTodos(prev => sortByTime([...prev, todo]));
+  const addTodo = async (todo: Omit<Todo, 'id'>) => {
+    try {
+      const created = await api.createPlan({
+        date: todo.date,
+        title: todo.title,
+        description: todo.description,
+        time: todo.time,
+      });
+      setTodos(prev => sortByTime([...prev, planToTodo(created)]));
+    } catch (e) {
+      console.error('플랜 생성 실패', e);
+    }
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(prev => prev.filter(t => t.id !== id));
+  const deleteTodo = async (id: string) => {
+    try {
+      await api.deletePlan(id);
+      setTodos(prev => prev.filter(t => t.id !== id));
+    } catch (e) {
+      console.error('플랜 삭제 실패', e);
+    }
   };
 
-  const updateTodo = (id: number, updated: Partial<Todo>) => {
-    setTodos(prev => sortByTime(prev.map(t => t.id === id ? { ...t, ...updated } : t)));
+  const updateTodo = async (id: string, updated: Partial<Todo>) => {
+    try {
+      const plan = await api.updatePlan(id, {
+        title: updated.title,
+        description: updated.description,
+        time: updated.time,
+        completed: updated.completed,
+      });
+      setTodos(prev => sortByTime(prev.map(t => t.id === id ? planToTodo(plan) : t)));
+    } catch (e) {
+      console.error('플랜 수정 실패', e);
+    }
   };
 
-  const remaining = todos.filter(t => !t.completed).length;
-  const percentage = todos.length === 0 ? 0 : Math.round((todos.filter(t => t.completed).length / todos.length) * 100);
-
-  return { todos, toggleTodo, addTodo, deleteTodo, updateTodo, remaining, percentage };
+  return { todos, toggleTodo, addTodo, deleteTodo, updateTodo };
 };
