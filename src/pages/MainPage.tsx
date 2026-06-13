@@ -281,16 +281,20 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { todos, toggleTodo, addTodo, deleteTodo, updateTodo } = useTodos();
+  const dateStr = toDateStr(selectedDate);
+  const { todos, remaining, percentage: apiPercentage } = useTodos(dateStr);
+
+  // 아직 미연동 — 다음 이슈에서 구현 예정
+  const toggleTodo = (_id: string) => {};
+  const addTodo = (_todo: any) => {};
+  const deleteTodo = (_id: string) => {};
+  const updateTodo = (_id: string, _updated: any) => {};
+
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
     useCreateTodo(addTodo, selectedDate);
 
-  const dateStr = toDateStr(selectedDate);
-  const filteredTodos = todos.filter(t => t.date === dateStr);
-  const remaining = filteredTodos.filter(t => !t.completed).length;
-  const filteredPercentage = filteredTodos.length > 0
-    ? Math.round((filteredTodos.filter(t => t.completed).length / filteredTodos.length) * 100)
-    : 0;
+  const filteredTodos = todos;
+  const filteredPercentage = apiPercentage;
   const allCompleted = filteredTodos.length > 0 && filteredTodos.every(t => t.completed);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
