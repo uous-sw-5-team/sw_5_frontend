@@ -31,7 +31,7 @@ async function request<T>(
   });
 
   if (res.status === 401) {
-    localStorage.removeItem("token");
+    localStorage.removeItem("studyPlanner.authToken");
   }
 
   const data = await res.json().catch(() => ({}));

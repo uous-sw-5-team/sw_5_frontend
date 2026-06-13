@@ -13,20 +13,46 @@ export interface Todo {
 const planToTodo = (plan: PlanResponse): Todo => ({
   id: plan.id,
   title: plan.title,
-  time: plan.time ?? '',
+  time: apiTimeToTodoTime(plan.time),   // "09:00" → "오전 09:00"
   description: plan.description ?? '',
   completed: plan.completed,
   date: plan.date,
 });
 
-const timeToMinutes = (time: string): number => {
-  if (!time) return 0;
-  const [period, hhmm] = time.split(' ');
+// "오전 09:00" → "09:00" (24h, API 전송용)
+const todoTimeToApiTime = (time: string): string | undefined => {
+  if (!time) return undefined;
+  const parts = time.split(' ');
+  if (parts.length !== 2) return time; // 이미 "HH:MM" 형식이면 그대로
+  const [period, hhmm] = parts;
   const [h, m] = hhmm.split(':').map(Number);
   const hour = period === '오전'
     ? (h === 12 ? 0 : h)
     : (h === 12 ? 12 : h + 12);
-  return hour * 60 + m;
+  return `${String(hour).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+};
+
+// "09:00" (24h) → "오전 09:00" (UI 표시용)
+const apiTimeToTodoTime = (time: string | null): string => {
+  if (!time) return '';
+  const [h, m] = time.split(':').map(Number);
+  const period = h < 12 ? '오전' : '오후';
+  const displayH = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${period} ${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+};
+
+const timeToMinutes = (time: string): number => {
+  if (!time) return 0;
+  const parts = time.split(' ');
+  if (parts.length === 2) {
+    const [period, hhmm] = parts;
+    const [h, m] = hhmm.split(':').map(Number);
+    const hour = period === '오전' ? (h === 12 ? 0 : h) : (h === 12 ? 12 : h + 12);
+    return hour * 60 + m;
+  }
+  // "HH:MM" 형식
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
 };
 
 const sortByTime = (todos: Todo[]) =>
@@ -64,8 +90,8 @@ export const useTodos = (dateStr: string) => {
       const created = await api.createPlan({
         date: todo.date,
         title: todo.title,
-        description: todo.description,
-        time: todo.time,
+        description: todo.description || undefined,
+        time: todoTimeToApiTime(todo.time), // "오전 09:00" → "09:00"
       });
       setTodos(prev => sortByTime([...prev, planToTodo(created)]));
     } catch (e) {
@@ -87,7 +113,7 @@ export const useTodos = (dateStr: string) => {
       const plan = await api.updatePlan(id, {
         title: updated.title,
         description: updated.description,
-        time: updated.time,
+        time: updated.time ? todoTimeToApiTime(updated.time) : undefined,
         completed: updated.completed,
       });
       setTodos(prev => sortByTime(prev.map(t => t.id === id ? planToTodo(plan) : t)));
