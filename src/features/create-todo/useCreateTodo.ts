@@ -53,7 +53,7 @@ export const useCreateTodo = (onAdd: (todo: Todo) => void, selectedDate: Date) =
     const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
     const newTodo: Todo = {
-      id: Date.now(),
+      id: String(Date.now()),
       title: form.title.trim(),
       time: timeStr,
       description: form.description.trim(),
