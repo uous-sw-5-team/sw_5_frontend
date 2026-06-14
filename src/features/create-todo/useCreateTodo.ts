@@ -47,9 +47,7 @@ export const useCreateTodo = (onAdd: () => void, selectedDate: Date) => {
 
   const handleSubmit = async () => {
     if (!form.title.trim()) return;
-    const ampm = form.hour >= 12 ? '오후' : '오전';
-    const displayHour = form.hour % 12 === 0 ? 12 : form.hour % 12;
-    const timeStr = `${ampm} ${String(displayHour).padStart(2, '0')}:${String(form.minute).padStart(2, '0')}`;
+    const timeStr = `${String(form.hour).padStart(2, '0')}:${String(form.minute).padStart(2, '0')}`;
     const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
     try {

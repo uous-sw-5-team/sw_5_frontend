@@ -33,11 +33,11 @@ const ContentArea = styled.div`
   min-width: 0;
 `;
 
-const Title = styled.div<{ completed: boolean }>`
+const Title = styled.div<{ $completed: boolean }>`
   font-size: 15px;
   font-weight: 700;
-  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
-  color: ${({ completed }) => (completed ? '#aaaaaa' : '#1a1a1a')};
+  text-decoration: ${({ $completed }) => ($completed ? 'line-through' : 'none')};
+  color: ${({ $completed }) => ($completed ? '#aaaaaa' : '#1a1a1a')};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -227,7 +227,7 @@ const TodoCard: React.FC<TodoCardProps> = ({ todo, onToggle, onDelete, onSave })
     <Card>
       <Checkbox type="checkbox" checked={todo.completed} onChange={() => onToggle(todo.id)} />
       <ContentArea>
-        <Title completed={todo.completed}>{todo.title}</Title>
+        <Title $completed={todo.completed}>{todo.title}</Title>
         <TimeRow>
           <span>⏰</span>
           <span>{todo.time}</span>
