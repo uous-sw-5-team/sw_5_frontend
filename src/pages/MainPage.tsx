@@ -283,16 +283,15 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dateStr = toDateStr(selectedDate);
-  const { todos, remaining, percentage: apiPercentage } = useTodos(dateStr);
+  const { todos, remaining, percentage: apiPercentage, loadTodos } = useTodos(dateStr);
 
   // 아직 미연동 — 다음 이슈에서 구현 예정
   const toggleTodo = (_id: string) => {};
-  const addTodo = (_todo: any) => {};
   const deleteTodo = (_id: string) => {};
   const updateTodo = (_id: string, _updated: any) => {};
 
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
-    useCreateTodo(addTodo, selectedDate);
+    useCreateTodo(loadTodos, selectedDate);
 
   const filteredTodos = todos;
   const filteredPercentage = apiPercentage;
