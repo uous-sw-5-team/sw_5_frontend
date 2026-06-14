@@ -9,6 +9,7 @@ export interface Todo {
   description: string;
   completed: boolean;
   date: string;
+  photos: string[];
 }
 
 // "09:00" (24h) → "오전 09:00" (UI 표시용)
@@ -27,6 +28,7 @@ const planToTodo = (plan: PlanResponse): Todo => ({
   description: plan.description ?? "",
   completed: plan.completed,
   date: plan.date,
+  photos: plan.photos ?? [],
 });
 
 const timeToMinutes = (time: string): number => {

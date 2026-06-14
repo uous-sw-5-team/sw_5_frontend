@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
@@ -8,6 +8,8 @@ import { useTodos } from '../features/toggle-todo/useTodos';
 import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 import { useEditTodo } from '../features/edit-todo/useEditTodo';
 import { deletePlan } from '../features/delete-todo/deleteApi';
+import { uploadPhoto, getPhotoUrl } from '../features/upload-photo/photoApi';
+import { fetchPlans } from '../features/filter-todos/filterApi';
 
 interface MainPageProps {
   isAuthenticated?: boolean;
@@ -282,9 +284,23 @@ const toKoreanDate = (date: Date) =>
 export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignup, onLogout }: MainPageProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
+  const [calendarPhotos, setCalendarPhotos] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dateStr = toDateStr(selectedDate);
+  const monthStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}`;
+
+  useEffect(() => {
+    fetchPlans({ month: monthStr }).then(plans => {
+      const map: Record<string, string> = {};
+      plans.forEach(plan => {
+        if (plan.photos?.length > 0 && !map[plan.date]) {
+          map[plan.date] = getPhotoUrl(plan.photos[0]);
+        }
+      });
+      setCalendarPhotos(map);
+    }).catch(() => {});
+  }, [monthStr]);
   const { todos, setTodos, remaining, percentage: apiPercentage, loadTodos, toggleTodo } = useTodos(dateStr);
 
   const deleteTodo = async (id: string) => {
@@ -313,6 +329,9 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
         setUploadedImages(prev => ({ ...prev, [dateStr]: reader.result as string }));
       };
       reader.readAsDataURL(file);
+      if (todos.length > 0) {
+        uploadPhoto(todos[0].id, file).catch(err => console.error('사진 업로드 실패', err));
+      }
     }
   };
 
@@ -337,7 +356,7 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
           <Calendar
             selectedDate={selectedDate}
             onDateSelect={setSelectedDate}
-            uploadedImages={uploadedImages}
+            uploadedImages={{ ...calendarPhotos, ...uploadedImages }}
           />
         </ContentCard>
         <RightColumn>
@@ -397,9 +416,12 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
               <CompleteCard>
                 <CompleteIcon>✅</CompleteIcon>
                 <CompleteTitle>모든 할 일을 완료했습니다!</CompleteTitle>
-                {uploadedImages[dateStr] ? (
+                {(uploadedImages[dateStr] || (todos[0]?.photos?.length ?? 0) > 0) ? (
                   <PreviewWrapper>
-                    <PreviewImage src={uploadedImages[dateStr]} alt="업로드 사진" />
+                    <PreviewImage
+                      src={uploadedImages[dateStr] || getPhotoUrl(todos[0].photos[0])}
+                      alt="업로드 사진"
+                    />
                     <DeleteImageButton onClick={handleDeleteImage}>✕</DeleteImageButton>
                   </PreviewWrapper>
                 ) : (
