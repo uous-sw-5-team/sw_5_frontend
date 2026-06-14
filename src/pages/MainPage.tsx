@@ -6,6 +6,7 @@ import TodoList from '../components/TodoList';
 import FocusTracker from '../components/FocusTracker';
 import { useTodos } from '../features/toggle-todo/useTodos';
 import { useCreateTodo } from '../features/create-todo/useCreateTodo';
+import { useEditTodo } from '../features/edit-todo/useEditTodo';
 
 interface MainPageProps {
   isAuthenticated?: boolean;
@@ -283,12 +284,12 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dateStr = toDateStr(selectedDate);
-  const { todos, remaining, percentage: apiPercentage, loadTodos } = useTodos(dateStr);
+  const { todos, setTodos, remaining, percentage: apiPercentage, loadTodos, toggleTodo } = useTodos(dateStr);
 
   // 아직 미연동 — 다음 이슈에서 구현 예정
-  const toggleTodo = (_id: string) => {};
   const deleteTodo = (_id: string) => {};
-  const updateTodo = (_id: string, _updated: any) => {};
+
+  const { saveEdit } = useEditTodo(todos, setTodos, loadTodos);
 
   const { isFormOpen, form, openForm, closeForm, handleChange, handleHourChange, handleMinuteChange, handleSubmit } =
     useCreateTodo(loadTodos, selectedDate);
@@ -381,7 +382,7 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
                 todos={filteredTodos}
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
-                onSave={updateTodo}
+                onSave={saveEdit}
                 remaining={remaining}
               />
             </TodoScrollArea>

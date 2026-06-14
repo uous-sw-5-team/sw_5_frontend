@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchPlans, PlanResponse } from "../filter-todos/filterApi";
+import { togglePlan } from "./toggleApi";
 
 export interface Todo {
   id: string;
@@ -69,5 +70,16 @@ export const useTodos = (dateStr: string) => {
           (todos.filter((t) => t.completed).length / todos.length) * 100
         );
 
-  return { todos, setTodos, remaining, percentage, loadTodos };
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    try {
+      await togglePlan(id, !todo.completed);
+      loadTodos();
+    } catch (e) {
+      console.error("완료 토글 실패", e);
+    }
+  };
+
+  return { todos, setTodos, remaining, percentage, loadTodos, toggleTodo };
 };
