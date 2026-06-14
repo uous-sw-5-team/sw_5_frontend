@@ -7,6 +7,7 @@ import FocusTracker from '../components/FocusTracker';
 import { useTodos } from '../features/toggle-todo/useTodos';
 import { useCreateTodo } from '../features/create-todo/useCreateTodo';
 import { useEditTodo } from '../features/edit-todo/useEditTodo';
+import { deletePlan } from '../features/delete-todo/deleteApi';
 
 interface MainPageProps {
   isAuthenticated?: boolean;
@@ -286,8 +287,14 @@ export const MainPage = ({ isAuthenticated = false, onMoveToLogin, onMoveToSignu
   const dateStr = toDateStr(selectedDate);
   const { todos, setTodos, remaining, percentage: apiPercentage, loadTodos, toggleTodo } = useTodos(dateStr);
 
-  // 아직 미연동 — 다음 이슈에서 구현 예정
-  const deleteTodo = (_id: string) => {};
+  const deleteTodo = async (id: string) => {
+    try {
+      await deletePlan(id);
+      loadTodos();
+    } catch (e) {
+      console.error('플랜 삭제 실패', e);
+    }
+  };
 
   const { saveEdit } = useEditTodo(todos, setTodos, loadTodos);
 
